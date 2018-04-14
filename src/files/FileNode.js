@@ -1,6 +1,6 @@
 const throttle = require('lodash.throttle');
 const fs = require('fs');
-const { dirname } = require('path');
+const { dirname, extname } = require('path');
 
 const getDependencies = require('./getDependencies');
 const lazyFn = require('../util/lazyFn');
@@ -10,6 +10,7 @@ class FileNode {
     this.path = pathNode;
     
     this.dirname = dirname(this.path.path);
+    this.ext = extname(this.path.path);
     this.mtime = null;
     this.source = null;
     this.dependencies = null;

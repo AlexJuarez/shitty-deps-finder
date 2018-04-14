@@ -1,25 +1,16 @@
 const workerFarm = require("worker-farm");
-const workers = require("./Worker");
-
-const keyFn = (cwd, name) => `${cwd}/${name}`;
+const workers = workerFarm(require.resolve("./Worker"));
 
 class Manager {
   constructor(root, done) {
     this.jobs = [];
-    this.visited = {};
-    this.started = 0;
-    this.completed = 0;
     this.done = done;
     this.root = root;
+    this.completed = 0;
+    this.started = 0;
   }
 
   add({ cwd, name }, cb) {
-    const key = keyFn(cwd, name);
-    if (this.visited[key] != null) {
-      return;
-    }
-
-    this.visited[key] = true;
     this.jobs.push({ name, cwd, cb });
     this.started++;
     this.execute();
@@ -41,11 +32,17 @@ class Manager {
         console.error(err);
       }
 
-      this.completed++;
+      console.log(this.completed, name);
 
-      if (this.completed > 0 && this.completed === this.started && !this.jobs.length) {
-        this.done();
+      if (
+        this.completed > 0 &&
+        this.completed === this.started &&
+        !this.jobs.length
+      ) {
+        workerFarm.end(workers);
       }
+
+      this.completed++;
 
       if (results != null) {
         cb(results);

@@ -32,7 +32,7 @@ const pathTypes = (pathNode) => {
       pathNode.path = name;
       break;
     default: {
-      pathNode.path = pathNode.isAbsolute() ? name : path.resolve(cwd, name);
+      pathNode.path = pathNode.isAbsolute() ? name : path.join(cwd, name);
       break;
     }
   }

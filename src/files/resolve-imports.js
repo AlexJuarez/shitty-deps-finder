@@ -74,7 +74,7 @@ module.exports = (cwd) => {
     modulesDirectories: [join(cwd, 'node_modules')], // (default) only node_modules
     extensions: ['', '.node', '.js', '.jsx', '.es6.js', '.json'], // these extension
     fileSystem: require('fs'),
-    useSyncFileSystemCalls: true
+    useSyncFileSystemCalls: true,
   };
   const resolver = ResolverFactory.createResolver(opts);
   function resolve(name) {
