@@ -1,7 +1,7 @@
 const { join } = require('path');
 const builtinModules = require('builtin-modules');
 const ResolverFactory = require('enhanced-resolve/lib/ResolverFactory');
-const memoize = require('../util/memoize');
+const { profileFn } = require('../util/profileFn');
 
 function isAbsolute(name) {
   return name.indexOf('/') === 0;
@@ -88,7 +88,7 @@ module.exports = (cwd) => {
   }
 
   return {
-    resolve,
+    resolve: profileFn(resolve, 'resolve'),
     isAbsolute,
     type
   };

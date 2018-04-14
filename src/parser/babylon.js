@@ -1,23 +1,8 @@
 const babylon = require('babylon');
 
 const options = {
-  allowImportExportEverywhere: true,
-  allowReturnOutsideFunction: true,
   plugins: [
-    'jsx',
-    'flow',
-    'asyncFunctions',
-    'classConstructorCall',
-    'doExpressions',
-    'trailingFunctionCommas',
-    'objectRestSpread',
-    'decorators',
-    'classProperties',
-    'exportExtensions',
-    'exponentiationOperator',
-    'asyncGenerators',
-    'functionBind',
-    'functionSent',
+    'esgraph', 'jsx', 'objectRestSpread'
   ],
   sourceType: 'module',
 };

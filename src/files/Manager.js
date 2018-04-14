@@ -1,5 +1,6 @@
 const workerFarm = require("worker-farm");
-const workers = workerFarm(require.resolve("./Worker"));
+const workers = require("./Worker");
+const { getProfiles } = require('../util/profileFn');
 
 class Manager {
   constructor(root, done) {
@@ -32,17 +33,16 @@ class Manager {
         console.error(err);
       }
 
-      console.log(this.completed, name);
+      this.completed++;
 
       if (
-        this.completed > 0 &&
+        this.completed > 1 &&
         this.completed === this.started &&
         !this.jobs.length
       ) {
-        workerFarm.end(workers);
+        console.log(getProfiles());
+        return;
       }
-
-      this.completed++;
 
       if (results != null) {
         cb(results);

@@ -1,6 +1,7 @@
 const getSource = require('./getSource');
 const getDependencies = require('./getDependencies');
 const PathResolver = require('./PathResolver');
+const { profileFn } = require('../util/profileFn');
 
 const thunk = (...fns) => {
   const fn = fns.shift();
@@ -24,7 +25,7 @@ function Worker({ name, cwd, root }, callback) {
     return callback(null);
   }
 
-  thunk(getSource, getDependencies, (dependencies) => {
+  thunk(profileFn(getSource, 'getSource'), profileFn(getDependencies, 'getDependencies'), (dependencies) => {
     callback(null, { name, cwd, path, dependencies });
   })(path);
 }

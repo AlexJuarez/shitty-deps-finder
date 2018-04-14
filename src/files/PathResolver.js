@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const PathNode = require('./PathNode');
 const Resolver = require('./resolve-imports');
+const { profileFn } = require('../util/profileFn');
 
 const readProjectConfig = (dir) => {
   const file = ['.projectrc', 'project.json5'].map(f => path.join(dir,f)).filter(fs.existsSync).shift();
@@ -65,8 +66,8 @@ class PathResolver {
     this.fns = [];
 
     this.add(expandPaths);
-    this.add(pathTypes);
-    this.add(resolvePath);
+    this.add(profileFn(pathTypes, 'PathResolver:pathTypes'));
+    this.add(profileFn(resolvePath, 'PathResolver:resolvePath'));
   }
 
   add(middleware) {

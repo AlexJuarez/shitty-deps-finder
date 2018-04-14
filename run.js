@@ -13,7 +13,7 @@ const Run = (file) => {
   const PKG_ROOT = getPkgRoot(fp);
 
   const dependencyGraph = new DependencyGraph(PKG_ROOT);
-  
+
   dependencyGraph.register(file, PKG_ROOT);
 };
 
