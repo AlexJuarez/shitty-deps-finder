@@ -1,7 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-
-const Resolver = require('./resolve-imports');
+const PathNode = require('./PathNode');
 
 const readProjectConfig = (dir) => {
   const file = ['.projectrc', 'project.json5'].map(f => path.join(dir,f)).filter(fs.existsSync).shift();
@@ -21,43 +20,24 @@ const getProjectMainPath = (pathNode) => {
   return main != null ? path.join(dir, main) : dir;
 };
 
-class Path {
-  constructor(name, cwd, resolver, root) {
-    this.name = name;
-    this.cwd = cwd;
-    this.root = root;
-    this.type = (name) => resolver.type(name);
-    this.path = name;
-    this.resolve = (path) => resolver.resolve(path);
-    this.isAbsolute = (name) => resolver.isAbsolute(name);
-  }
-
-  valid() {
-    return this.path != null && fs.existsSync(this.path);
-  }
-}
-
 const pathTypes = (pathNode) => {
   const { name, cwd } = pathNode;
-  switch (pathNode.type(name)) {
+  switch (pathNode.type()) {
     case 'builtin':
-      pathNode.path = null;
-      break;
+      return name;
     case 'project':
     case 'external':
-      pathNode.path = name;
-      break;
+      return name;
     default: {
-      pathNode.path = pathNode.isAbsolute(name) ? name : path.resolve(cwd, name);
-      break;
+      return pathNode.isAbsolute(name) ? name : path.resolve(cwd, name);
     }
   }
 }
 
-const expandPaths = (pathNode) => {
+const expandPaths = (root) => (pathNode) => {
   const { name } = pathNode;
 
-  pathNode.name = name.replace(':monorail', path.resolve(pathNode.root, 'app/assets/javascripts'));
+  pathNode.name = name.replace(':monorail', path.resolve(root, 'app/assets/javascripts'));
 
   if (pathNode.type(pathNode.name) !== 'project') {
     return;
@@ -67,20 +47,20 @@ const expandPaths = (pathNode) => {
 }
 
 const resolvePath = (pathNode) => {
-  const { path } = pathNode;
-  if (path != null) {
+  const path = pathTypes(pathNode);
+
+  if (path != null && !pathNode.valid()) {
     pathNode.path = pathNode.resolve(path);
   }
+
+  pathNode.path = path;
 }
 
 class PathResolver {
   constructor(root) {
-    this.root = root;
-    this.resolver = Resolver(root);
     this.fns = [];
 
-    this.add(expandPaths);
-    this.add(pathTypes);
+    this.add(expandPaths(root));
     this.add(resolvePath);
   }
 
@@ -89,7 +69,7 @@ class PathResolver {
   }
 
   createPathNode(name, cwd = '') {
-    const pathNode = new Path(name, cwd, this.resolver, this.root);
+    const pathNode = new PathNode(name, cwd);
 
     for (let i = 0; i < this.fns.length; i++) {
       const fn = this.fns[i];

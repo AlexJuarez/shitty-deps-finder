@@ -1,18 +1,13 @@
-const { dirname, extname } = require('path');
 const throttle = require('lodash.throttle');
 const fs = require('fs');
 
 const getDependencies = require('./getDependencies');
+const lazyFn = require('../util/lazyFn');
  
 class FileNode {
   constructor(pathNode) {
-    this.pathNode = pathNode;
-    const { path, type } = pathNode;
-    this.path = path;
-    this.type = type;
-    this.dirname = dirname(path);
-    this.ext = extname(path);
-    this.isStale = throttle(this.isStale.bind(this), 100);
+    this.path = pathNode;
+    
     this.mtime = null;
     this.source = null;
     this.dependencies = null;
@@ -20,14 +15,10 @@ class FileNode {
 
   isStale() {
     const mtime = this.lastModified();
+    const stale = this.mtime == null || mtime > this.mtime;
+    this.mtime = mtime;
 
-    return this.mtime == null || mtime > this.mtime;
-  }
-
-  refresh() {
-    this.mtime = this.lastModified();
-    this.source = null;
-    this.dependencies = null;
+    return stale;
   }
 
   lastModified() {

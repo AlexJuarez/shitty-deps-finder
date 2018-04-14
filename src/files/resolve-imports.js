@@ -1,6 +1,7 @@
 const { join } = require('path');
 const builtinModules = require('builtin-modules');
 const ResolverFactory = require('enhanced-resolve/lib/ResolverFactory');
+const memoize = require('../util/memoize');
 
 function isAbsolute(name) {
   return name.indexOf('/') === 0;
@@ -91,4 +92,4 @@ module.exports = (cwd) => {
     isAbsolute,
     type
   };
-}
+};

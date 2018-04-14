@@ -1,17 +1,13 @@
 const FileMap = require('./FileMap');
 const PathResolver = require('./PathResolver');
+const PathNode = require('./PathNode');
 const memoize = require('../util/memoize');
 const Manager = require('./Manager');
 
 class DependencyGraph {
   constructor(root) {
     this.files = new FileMap();
-    const resolver = new PathResolver(root);
-
-    const resolve = (name, cwd) => resolver.createPathNode(name, cwd);
-    const keyFn = (name, cwd) => `${cwd}/${name}`;
-    this.resolve = memoize(keyFn, resolve);
-    this.manager = new Manager(this.done.bind(this));
+    this.manager = new Manager(root, this.done.bind(this));
     this.start = new Date();
   }
 
@@ -20,34 +16,30 @@ class DependencyGraph {
     console.log(`time: ${new Date() - this.start}ms`);
   }
 
-  register(name, cwd) {
-    const pathNode = this.resolve(name, cwd);
-    if (!pathNode.valid()) {
-      return;
-    }
-
-    const { path } = pathNode;
-  
+  add(name, cwd, path, source, dependencies) {
+    const pathNode = new PathNode(name, cwd, path);
+    
     if (!this.files.has(pathNode)) {
       this.files.add(pathNode);
     }
 
     const file = this.files.get(pathNode);
-    if (!file.isStale()) {
-      return;
-    }
+    file.source = source;
+    file.dependencies = dependencies;
 
-    file.refresh();
+    return file;
+  }
 
-    const done = ({ source, dependencies}) => {
-      file.source = source;
-      file.dependencies = dependencies;
+  register(name, cwd) {
+    const done = ({ name, cwd, path, source, dependencies }) => {
+      const file = this.add(name, cwd, path, source, dependencies);
+
       dependencies.forEach(p => {
-        this.register(p, file.dirname);
+        this.register(p, cwd);
       });
     };
 
-    this.manager.add(file.path, done);
+    this.manager.add({ name, cwd }, done);
   }
 
   toArray() {

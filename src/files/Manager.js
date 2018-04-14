@@ -2,15 +2,16 @@ const workerFarm = require("worker-farm");
 const workers = require("./Worker");
 
 class Manager {
-  constructor(done) {
+  constructor(root, done) {
     this.jobs = [];
     this.started = 0;
     this.completed = 0;
     this.done = done;
+    this.root = root;
   }
 
-  add(path, cb) {
-    this.jobs.push({ path, cb });
+  add({ name, cwd }, cb) {
+    this.jobs.push({ name, cwd, cb });
     this.started++;
     this.execute();
   }
@@ -24,15 +25,16 @@ class Manager {
       return;
     }
 
-    const { path, cb } = this.jobs.shift();
-    workers({ path }, (err, { source, dependencies }) => {
+    const { name, cwd, cb } = this.jobs.shift();
+    const { root } = this;
+    workers({ name, cwd, root }, (err, results) => {
       if (err) {
         console.error(err);
       }
 
       this.completed++;
 
-      cb({ source, dependencies });
+      cb(results);
 
       if (this.completed > 0 && this.completed === this.started && !this.jobs.length) {
         this.done();
