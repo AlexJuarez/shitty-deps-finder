@@ -29,14 +29,12 @@ const getDependencies = (source) => {
   return dependencies;
 };
 
-module.exports = (fileNode) => {
-  if (fileNode.ext !== '.js' && fileNode.ext !== '.jsx') {
-    return [];
-  }
-
-  try {
-    return getDependencies(fileNode.getSource());
-  } catch (err) {
-    return [];
-  }
+module.exports = (source) => {
+  return new Promise((resolve, reject) => {
+    try {
+      resolve(getDependencies(source));
+    } catch (err) {
+      resolve([]);
+    }
+  });
 };

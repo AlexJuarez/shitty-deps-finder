@@ -12,13 +12,9 @@ const Run = (file) => {
   const fp = resolvePath(file);
   const PKG_ROOT = getPkgRoot(fp);
 
-  const start = new Date();
   const dependencyGraph = new DependencyGraph(PKG_ROOT);
   
   dependencyGraph.register(file, PKG_ROOT);
-  console.log(`time: ${new Date() - start}ms`);
-
-  return dependencyGraph.toArray();
 };
 
 module.exports = Run;

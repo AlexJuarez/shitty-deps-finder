@@ -33,22 +33,6 @@ class FileNode {
   lastModified() {
     return fs.statSync(this.path).mtime;
   }
-
-  getSource() {
-    if (this.source == null) {
-      this.source = fs.readFileSync(this.path, { encoding: 'utf8' });
-    }
-
-    return this.source;
-  }
-
-  getDependencies() {
-    if (this.dependencies == null) {
-      this.dependencies = getDependencies(this);
-    }
-
-    return this.dependencies;
-  }
 }
 
 module.exports = FileNode;

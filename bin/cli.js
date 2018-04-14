@@ -10,7 +10,7 @@ program
 program
   .usage('<file>')
   .action((file) => {
-    console.log(Run(file));
+    Run(file);
   });
 
 program.parse(process.argv);
