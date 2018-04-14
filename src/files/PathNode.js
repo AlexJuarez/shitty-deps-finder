@@ -1,42 +1,24 @@
-const { dirname, extname } = require('path');
 const fs = require('fs');
 const Resolver = require('./resolve-imports');
-const lazyFn = require('../util/lazyFn');
 
 class PathNode {
-  constructor(name, cwd, path) {
+  constructor(name, cwd, root, path) {
     this.name = name;
     this.cwd = cwd;
+    this.root = root;
     this.path = path;
-
-    this.valid = lazyFn(this.valid);
-  }
-
-  dirname() {
-    return dirname(this.path);
-  }
-
-  ext() {
-    return extname(this.path);
   }
 
   type() {
-    const { cwd } = this;
-    return Resolver(cwd).type(this.name);
-  }
-
-  resolve(path) {
-    const { cwd } = this;    
-    return Resolver(cwd).resolve(path);
+    return Resolver(this.cwd).type(this.name);
   }
 
   isAbsolute() {
-    const { cwd } = this;
-    return Resolver(cwd).isAbsolute(this.name);
+    return Resolver(this.cwd).isAbsolute(this.name);
   }
 
-  valid() {
-    return () => this.path != null && fs.existsSync(this.path);
+  isValid() {
+    return this.path != null && fs.existsSync(this.path);
   }
 }
 

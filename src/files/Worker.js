@@ -8,7 +8,7 @@ const thunk = (...fns) => {
     const output = fn(...args);
 
     if (fns.length > 0) {
-      return output.then(r => thunk(...fns)(r));
+      return output.then(r => thunk(...fns)(r)).catch(err => { console.log(err) });
     }
  
     return output;
@@ -16,9 +16,13 @@ const thunk = (...fns) => {
 }
 
 function Worker({ name, cwd, root }, callback) {
-  const pathFactory = new PathResolver(root);
-  const pathNode = pathFactory.createPathNode(name, cwd);
+  const pathFactory = new PathResolver();
+  const pathNode = pathFactory.createPathNode(name, cwd, root);
   const { path } = pathNode;
+
+  if (path == null) {
+    callback(null);
+  }
 
   thunk(getSource, getDependencies, (dependencies) => {
     callback(null, { name, cwd, path, dependencies });

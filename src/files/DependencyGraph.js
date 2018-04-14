@@ -9,6 +9,10 @@ class DependencyGraph {
     this.files = new FileMap();
     this.manager = new Manager(root, this.done.bind(this));
     this.start = new Date();
+    this.root = root;
+
+    const keyFn = (name, cwd) => `${name}/${cwd}`;
+    this.register = memoize(keyFn, this.register.bind(this));
   }
 
   done() {
@@ -17,12 +21,12 @@ class DependencyGraph {
   }
 
   add(name, cwd, path, source, dependencies) {
-    const pathNode = new PathNode(name, cwd, path);
-    
+    const pathNode = new PathNode(name, cwd, this.root, path);
+
     if (!this.files.has(pathNode)) {
       this.files.add(pathNode);
     }
-
+    
     const file = this.files.get(pathNode);
     file.source = source;
     file.dependencies = dependencies;
@@ -35,7 +39,7 @@ class DependencyGraph {
       const file = this.add(name, cwd, path, source, dependencies);
 
       dependencies.forEach(p => {
-        this.register(p, cwd);
+        this.register(p, file.dirname);
       });
     };
 
