@@ -1,15 +1,8 @@
 const profiles = {};
 
-function getStack() {
-  return (new Error).stack.split(/\s+/g).slice(2).reverse().slice(2);
-}
-
-function profileFn(fn, name) {
-  const stack = getStack();
-  const key = name || stack.join('');
-
+function profileFn(fn, key) {
   if (profiles[key] == null) {
-    profiles[key] = { time: 0, stack };
+    profiles[key] = { time: 0 };
   }
 
   return (...args) => {

@@ -1,40 +1,55 @@
-const jscodeshift = require('jscodeshift');
+const walk = require('babylon-walk');
+
 const parser = require('../parser/babylon');
 const { profileFn } = require('../util/profileFn');
 
-const getDependencies = (source) => {
-  const dependencies = [];
+const getImports = (ast) => {
+  const state = {
+    dependencies: [],
+  };
 
-  const j = jscodeshift.withParser(parser);
+  const visitors = {
+    ImportDeclaration(node, state) {
+      state.dependencies.push(node.source.value);
+    }
+  };
 
-  const root = j(source);
-  root
-    .find(j.ImportDeclaration)
-    .forEach(p => {
-      const name = p.value.source.value;
-      dependencies.push(name);
-    });
+  walk.simple(ast, visitors, state);
 
-  root
-    .find(j.CallExpression, {
-      callee: {
-        name: 'require'
+  return state.dependencies;
+}
+
+const getRequire = (ast) => {
+  const state = {
+    dependencies: [],
+  };
+
+  const visitors = {
+    CallExpression(node, state) {
+      if (node.callee.name === 'require') {
+        state.dependencies.push(...node.arguments.map(a => a.value));
       }
-    })
-    .forEach(p => {
-      p.value.arguments.forEach(arg => {
-        dependencies.push(arg.value);
-      });
-    });
+    }
+  };
 
-  return dependencies;
+  walk.simple(ast, visitors, state);
+
+  return state.dependencies;
+}
+
+const getDependencies = (source) => {
+  const ast = parser.parse(source);
+
+  return [
+    ...getImports(ast),
+    ...getRequire(ast),
+  ];
 };
 
 module.exports = profileFn((source) => {
   try {
     return getDependencies(source);
   } catch (err) {
-    console.log(err);
     return [];
   }
 }, 'getDependencies');
