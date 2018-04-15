@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const { type } = require('./resolve-imports')();
+const resolver = require('./resolve-imports');
 const getPkgRoot = require('./getPkgRoot');
 
 const readProjectConfig = (dir) => {
@@ -23,12 +23,16 @@ const expandMonorail = (name) => {
   if (name.indexOf(':monorail') > -1) {
     return name.replace(':monorail', path.resolve(root, 'app/assets/javascripts'));
   }
+
+  return name;
 }
 
 const expandProject = (name) => {
-  if (type(name) === 'project') {
+  if (resolver().type(name) === 'project') {
     return getProjectMainPath(name);
   }
+
+  return name;
 }
 
 module.exports = {

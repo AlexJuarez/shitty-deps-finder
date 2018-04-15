@@ -1,5 +1,3 @@
-const FileNode = require('./FileNode');
-
 class FileStore {
   constructor() {
     this.files = {};
@@ -10,7 +8,7 @@ class FileStore {
   }
 
   has(file) {
-    return this.files[file.path] != null;
+    return this.files[file.name] != null || this.files[file.path] != null;
   }
 
   add(file) {

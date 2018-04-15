@@ -1,10 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const { dirname, extname } = require('path');
-const getPkgRoot = require('../util/getPkgRoot');
+const { getPkgRoot } = require('../util/getPkgRoot');
 const memoize = require('../util/memoize');
-const resolver = require('../util/resolve-imports')();
-const { expandMonorail, expandProject } = require('../util/pathTransforms')
+const resolver = require('../util/resolve-imports');
+const { expandMonorail, expandProject } = require('../util/pathTransforms');
+const { profileFn } = require('../util/profileFn');
 
 const exists = (path) => fs.existsSync(path);
 
@@ -26,7 +27,7 @@ const applyTransforms = (name) => {
 }
 
 const isNodeModule = (cwd, name) => {
-  const path = createPath(getPkgRoot(cwd), 'node_modules', name);
+  const path = createPath(getPkgRoot(), 'node_modules', name);
   if (exists(path)) {
     return name;
   }
@@ -39,26 +40,24 @@ const isExt = (ext) => (cwd, name) => {
   }
 }
 
-const resolve = memoize((cwd, name) => {
+const resolve = profileFn(memoize((cwd, name) => {
   const possiblePaths = [
     isExt('.js'),
     isExt('.jsx'),
     isNodeModule,
-    resolver.resolve,
   ];
 
   while (possiblePaths.length) {
     const fn = possiblePaths.shift();
     const resolvedName = applyTransforms(name); 
     const path = fn(cwd, resolvedName);
-    if (path != null) {
+    if (exists(path)) {
       return path;
     }
   }
 
-  console.error(`could not locate ${name} in ${cwd}`);
-  return name;
-});
+  return resolver().resolve(cwd, name);
+}), 'resolve');
 
 class Path {
   constructor(cwd, name, path = resolve(cwd, name)) {

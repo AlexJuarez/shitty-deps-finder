@@ -1,7 +1,7 @@
 const { join } = require('path');
 const builtinModules = require('builtin-modules');
 const ResolverFactory = require('enhanced-resolve/lib/ResolverFactory');
-const getPkgRoot = require('./getPkgRoot');
+const { getPkgRoot } = require('./getPkgRoot');
 const fs = require('fs');
 
 function isAbsolute(name) {
@@ -97,6 +97,7 @@ module.exports = () => {
   return {
     resolve,
     isAbsolute,
-    type
+    isBuiltIn,
+    type,
   };
 };

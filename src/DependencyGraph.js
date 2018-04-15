@@ -1,30 +1,29 @@
 const FileList = require('./FileList');
 const File = require('./store/File');
+const resolver = require('./util/resolve-imports');
 
 class DependencyGraph {
   constructor() {
     this.files = new FileList();
   }
 
-  add(cwd, name) {
-    const file = new File(cwd, name);
+  add(cwd, name, path) {
+    const file = new File(cwd, name, path);
     
     if (!this.files.hasFile(file)) {
       this.crawl(file);
       this.files.addFile(file);
     }
-
-    return this.files.getFile(file);
   }
 
   crawl(file) {
-    file.dependencies.forEach(name => {
+    file.dependencies.filter(name => !resolver().isBuiltIn(name)).forEach(name => {
       this.add(file.dirname, name);
     });
   }
 
   toArray() {
-    return this.files.all();
+    return this.files.toArray();
   }
 }
 

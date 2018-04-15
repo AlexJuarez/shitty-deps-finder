@@ -1,6 +1,7 @@
 const Path = require('./Path');
 const getSource = require('../util/getSource');
 const getDependencies = require('../util/getDependencies');
+const fs = require('fs');
 
 class File {
   constructor(cwd, name, path, source, dependencies) {

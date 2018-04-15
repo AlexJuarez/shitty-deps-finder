@@ -1,8 +1,6 @@
 const path = require('path');
-const logger = require('./src/util/logger');
-const getPkgRoot = require('./src/getPkgRoot');
-
-const DependencyGraph = require('./src/files/DependencyGraph');
+const { setPkgRoot } = require('./src/util/getPkgRoot');
+const Runner = require('./src/Runner');
 
 const DEV_MODE = (process.env.NODE_ENV !== 'production');
 
@@ -10,11 +8,10 @@ const resolvePath = (file) => path.isAbsolute(file) ? path.resolve(file) : path.
 
 const Run = (file) => {
   const fp = resolvePath(file);
-  const PKG_ROOT = getPkgRoot(fp);
+  setPkgRoot(fp);
 
-  const dependencyGraph = new DependencyGraph(PKG_ROOT);
-
-  dependencyGraph.register(file, PKG_ROOT);
+  const runner = new Runner();
+  runner.start(fp);
 };
 
 module.exports = Run;

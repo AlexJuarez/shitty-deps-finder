@@ -33,7 +33,9 @@ class FileList {
     return this.store.get(file);
   }
 
-  files() {
+  toArray() {
     return this.store.toArray();
   }
 }
+
+module.exports = FileList;

@@ -2,7 +2,7 @@ module.exports = (fn, keyFn) => {
   const cache = {};
 
   if (keyFn == null) {
-    keyFn = (args) => args.map(arg => arg.toString()).join(':');
+    keyFn = (...args) => [...args].map(arg => arg.toString()).join(':');
   }
 
   return (...args) => {
