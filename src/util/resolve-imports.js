@@ -1,7 +1,8 @@
 const { join } = require('path');
 const builtinModules = require('builtin-modules');
 const ResolverFactory = require('enhanced-resolve/lib/ResolverFactory');
-const { profileFn } = require('../util/profileFn');
+const getPkgRoot = require('./getPkgRoot');
+const fs = require('fs');
 
 function isAbsolute(name) {
   return name.indexOf('/') === 0;
@@ -68,16 +69,22 @@ function type(name, path) {
   return 'unknown';
 };
 
-module.exports = (cwd) => {
+let resolver;
+
+module.exports = () => {
   const opts = {
     paths: [],
-    modulesDirectories: [join(cwd, 'node_modules')], // (default) only node_modules
+    modulesDirectories: [join(getPkgRoot(), 'node_modules')], // (default) only node_modules
     extensions: ['', '.node', '.js', '.jsx', '.es6.js', '.json'], // these extension
-    fileSystem: require('fs'),
+    fileSystem: fs,
     useSyncFileSystemCalls: true,
   };
-  const resolver = ResolverFactory.createResolver(opts);
-  function resolve(name) {
+  
+  if (resolver == null) {
+    resolver = ResolverFactory.createResolver(opts);
+  } 
+
+  function resolve(cwd, name) {
     try {
       return resolver.resolveSync({}, cwd, name);
     } catch (err) {
@@ -88,7 +95,7 @@ module.exports = (cwd) => {
   }
 
   return {
-    resolve: profileFn(resolve, 'resolve'),
+    resolve,
     isAbsolute,
     type
   };

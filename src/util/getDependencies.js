@@ -30,11 +30,9 @@ const getDependencies = (source) => {
 };
 
 module.exports = (source) => {
-  return new Promise((resolve, reject) => {
-    try {
-      resolve(getDependencies(source));
-    } catch (err) {
-      resolve([]);
-    }
-  });
+  try {
+    return getDependencies(source);
+  } catch (err) {
+    return [];
+  }
 };

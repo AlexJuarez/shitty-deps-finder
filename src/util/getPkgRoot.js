@@ -1,9 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const logger = require('./util/logger');
-const log = logger.create('server-utils');
-
 /* eslint import/no-dynamic-require: off */
 
 let PKG_ROOT = null;
