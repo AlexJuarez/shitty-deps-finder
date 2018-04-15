@@ -1,3 +1,4 @@
+const jscodeshift = require('jscodeshift');
 const parser = require('../parser/babylon');
 const { profileFn } = require('../util/profileFn');
 
@@ -33,6 +34,7 @@ module.exports = profileFn((source) => {
   try {
     return getDependencies(source);
   } catch (err) {
+    console.log(err);
     return [];
   }
 }, 'getDependencies');

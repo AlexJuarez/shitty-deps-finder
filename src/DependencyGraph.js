@@ -11,8 +11,8 @@ class DependencyGraph {
     const file = new File(cwd, name, path);
     
     if (!this.files.hasFile(file)) {
-      this.crawl(file);
       this.files.addFile(file);
+      this.crawl(file);
     }
   }
 

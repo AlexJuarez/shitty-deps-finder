@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const resolver = require('./resolve-imports');
-const getPkgRoot = require('./getPkgRoot');
+const { getPkgRoot } = require('./getPkgRoot');
 
 const readProjectConfig = (dir) => {
   const file = ['.projectrc', 'project.json5'].map(f => path.join(dir,f)).filter(fs.existsSync).shift();
@@ -21,7 +21,7 @@ const getProjectMainPath = (name) => {
 
 const expandMonorail = (name) => {
   if (name.indexOf(':monorail') > -1) {
-    return name.replace(':monorail', path.resolve(root, 'app/assets/javascripts'));
+    return name.replace(':monorail', path.resolve(getPkgRoot(), 'app/assets/javascripts'));
   }
 
   return name;

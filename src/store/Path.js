@@ -46,17 +46,17 @@ const resolve = profileFn(memoize((cwd, name) => {
     isExt('.jsx'),
     isNodeModule,
   ];
+  const resolvedName = applyTransforms(name); 
 
   while (possiblePaths.length) {
     const fn = possiblePaths.shift();
-    const resolvedName = applyTransforms(name); 
     const path = fn(cwd, resolvedName);
     if (exists(path)) {
       return path;
     }
   }
 
-  return resolver().resolve(cwd, name);
+  return resolver().resolve(cwd, resolvedName);
 }), 'resolve');
 
 class Path {
