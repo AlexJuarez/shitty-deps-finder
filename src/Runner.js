@@ -9,7 +9,7 @@ class Runner {
 
   start(fp) {
     this.dependencies.add(dirname(fp), basename(fp), fp);
-    console.log(this.dependencies.toArray().length);
+    console.log(`found ${this.dependencies.toArray().length} dependencies`);
     console.log(getProfiles());
   }
 }
