@@ -3,6 +3,9 @@ const walk = require('babylon-walk');
 const parser = require('../parser/babylon');
 const { profileFn } = require('../util/profileFn');
 
+const isStringLiteral = (node) => 
+  node.type === 'Literal' || node.type === 'StringLiteral';
+
 const getImports = (ast) => {
   const state = {
     dependencies: [],
@@ -24,10 +27,17 @@ const getRequire = (ast) => {
     dependencies: [],
   };
 
+  const fns = ['require', 'lazyLoad', 'dynamicImport'];
+
   const visitors = {
     CallExpression(node, state) {
-      if (node.callee.name === 'require') {
-        state.dependencies.push(...node.arguments.map(a => a.value));
+      if (node.callee.type !== 'Identifier') {
+        return;
+      }
+
+      if (fns.indexOf(node.callee.name) > -1) {
+        const dependencies = node.arguments.filter(isStringLiteral).map(a => a.value);
+        state.dependencies.push(...dependencies);
       }
     }
   };
