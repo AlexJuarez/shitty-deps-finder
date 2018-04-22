@@ -3,7 +3,7 @@ const path = require('path');
 const { dirname, extname } = require('path');
 const { getPkgRoot } = require('../util/getPkgRoot');
 const memoize = require('../util/memoize');
-const resolver = require('../util/resolve-imports');
+const resolver = require('../util/resolve');
 const { expandMonorail, expandProject } = require('../util/pathTransforms');
 const { profileFn } = require('../util/profileFn');
 
@@ -56,7 +56,7 @@ const resolve = profileFn(memoize((cwd, name) => {
     }
   }
 
-  return resolver().resolve(cwd, resolvedName);
+  return resolver(cwd, resolvedName);
 }), 'resolve');
 
 class Path {

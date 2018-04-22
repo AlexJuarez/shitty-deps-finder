@@ -1,8 +1,5 @@
 const { join } = require('path');
 const builtinModules = require('builtin-modules');
-const ResolverFactory = require('enhanced-resolve/lib/ResolverFactory');
-const { getPkgRoot } = require('./getPkgRoot');
-const fs = require('fs');
 
 function isAbsolute(name) {
   return name.indexOf('/') === 0;
@@ -58,6 +55,8 @@ const rules = [
   [isRelativeToSibling, 'sibling']
 ];
 
+const types = rules.map(rule => rule[1]);
+
 function type(name, path) {
   for (let i = 0; i < rules.length; i++) {
     const [rule, type] = rules[i];
@@ -69,35 +68,17 @@ function type(name, path) {
   return 'unknown';
 };
 
-let resolver;
-
-module.exports = () => {
-  const opts = {
-    paths: [],
-    modulesDirectories: [join(getPkgRoot(), 'node_modules')], // (default) only node_modules
-    extensions: ['', '.node', '.js', '.jsx', '.es6.js', '.json'], // these extension
-    fileSystem: fs,
-    useSyncFileSystemCalls: true,
-  };
-  
-  if (resolver == null) {
-    resolver = ResolverFactory.createResolver(opts);
-  } 
-
-  function resolve(cwd, name) {
-    try {
-      return resolver.resolveSync({}, cwd, name);
-    } catch (err) {
-      console.log(`could not find file ${name}, in context: ${cwd}`);
-    }
-
-    return null;
-  }
-
-  return {
-    resolve,
-    isAbsolute,
-    isBuiltIn,
-    type,
-  };
+module.exports = {
+  type,
+  types,
+  isAbsolute,
+  isBuiltIn,
+  isProjectRoot,
+  isExternalPath,
+  isExternalModule,
+  isScoped,
+  isInternalModule,
+  isRelativeToParent,
+  isIndex,
+  isRelativeToSibling
 };

@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const resolver = require('./resolve-imports');
+const { type } = require('./resolve/types');
 const { getPkgRoot } = require('./getPkgRoot');
 
 const readProjectConfig = (dir) => {
@@ -28,7 +28,7 @@ const expandMonorail = (name) => {
 }
 
 const expandProject = (name) => {
-  if (resolver().type(name) === 'project') {
+  if (type(name) === 'project') {
     return getProjectMainPath(name);
   }
 

@@ -3,8 +3,8 @@ const { dirname, basename } = require('path');
 const { getProfiles } = require('./util/profileFn');
 
 class Runner {
-  constructor() {
-    this.dependencies = new DependencyGraph();
+  constructor(opts) {
+    this.dependencies = new DependencyGraph(opts);
   }
 
   start(fp) {
