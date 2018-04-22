@@ -1,5 +1,5 @@
 const fs = require('fs');
-const path = require('path');
+const { join, normalize } = require('path');
 const { dirname, extname } = require('path');
 const { getPkgRoot } = require('../util/getPkgRoot');
 const memoize = require('../util/memoize');
@@ -9,7 +9,7 @@ const { profileFn } = require('../util/profileFn');
 
 const exists = (path) => fs.existsSync(path);
 
-const createPath = (...args) => path.normalize(path.join(...args));
+const createPath = (...args) => normalize(join(...args));
 
 const applyTransforms = (name) => {
   const fns = [
@@ -26,8 +26,13 @@ const applyTransforms = (name) => {
   return result;
 }
 
+let nodePath;
 const isNodeModule = (cwd, name) => {
-  const path = createPath(getPkgRoot(), 'node_modules', name);
+  if (nodePath == null) {
+    nodePath = createPath(getPkgRoot(), 'node_modules');
+  }
+
+  const path = join(nodePath, name);
   if (exists(path)) {
     return name;
   }

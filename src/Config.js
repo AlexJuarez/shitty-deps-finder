@@ -5,8 +5,6 @@ class Config {
     this.crawl = !opts.noCrawl;
     this.types = opts.types;
     this.verbose = !!opts.verbose;
-
-    console.log(this);
   }
 }
 

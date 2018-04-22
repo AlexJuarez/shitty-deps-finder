@@ -45,6 +45,15 @@ class File {
   get name(){
     return this._path.name;
   }
+
+  valueOf() {
+    return {
+      path: this.path,
+      cwd: this.cwd,
+      name: this.name,
+      dependencies: this.dependencies,
+    };
+  }
 }
 
 module.exports = File;
