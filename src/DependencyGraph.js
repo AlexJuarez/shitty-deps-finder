@@ -1,7 +1,8 @@
 const FileList = require('./FileList');
 const File = require('./store/File');
 const Config = require('./Config');
-const { getPkgRoot } = require('./util/getPkgRoot');
+const { getPkgRoot, setPkgRoot } = require('./util/getPkgRoot');
+const { join, dirname, basename, sep } = require('path');
 
 const isExternal = file => ['builtin', 'external'].indexOf(file.type) !== -1;
 
@@ -19,6 +20,10 @@ class DependencyGraph {
   constructor(opts) {
     this.config = new Config(opts);
     this.files = new FileList();
+
+    if (this.config.root) {
+      setPkgRoot(this.config.root);
+    }
   }
 
   summary(fp) {
@@ -35,8 +40,12 @@ class DependencyGraph {
     };
   }
 
+  addPath(path) {
+    this.add(dirname(path), basename(path), path);
+  }
+
   add(cwd, name, path) {
-    const file = new File(cwd, name, this.config.resolver(cwd, name) || path);
+    const file = new File(cwd, name, path);
     
     if (this.files.hasFile(file)) {
       return;
