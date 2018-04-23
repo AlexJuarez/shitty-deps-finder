@@ -1,10 +1,21 @@
 const FileList = require('./FileList');
 const File = require('./store/File');
 const Config = require('./Config');
-const { isBuiltIn, isExternalPath } = require('./util/resolve/types');
+const { getPkgRoot } = require('./util/getPkgRoot');
 
-function filterBuiltIn(name) {
-  return !isBuiltIn(name);
+const isExternal = file => ['builtin', 'external'].indexOf(file.type) !== -1;
+
+const makeGraph = files => {
+  const graph = {};
+
+  files.forEach(file => {
+    graph[file.path] = {
+      cwd: file.cwd,
+      dependencies: file.dependencies,
+    };
+  });
+
+  return graph;
 }
 
 class DependencyGraph {
@@ -13,8 +24,18 @@ class DependencyGraph {
     this.files = new FileList();
   }
 
-  get(fp) {
-    return this.files.get(fp).valueOf();
+  getGraph(fp) {
+    const dependencies = this.toArray();
+    const relative = dependencies.filter(file => !isExternal(file));
+    const absolute = dependencies.filter(isExternal);
+
+    return {
+      root: getPkgRoot(),
+      filePath: fp,
+      relative: relative.map(f => f.path),
+      absolute: absolute.map(f => f.name),
+      graph: makeGraph(relative),
+    };
   }
 
   add(cwd, name, path) {
@@ -26,8 +47,8 @@ class DependencyGraph {
     
     this.files.addFile(file);
 
-    if (!this.config.crawl || isExternalModule(name, cwd)) {
-      console.log(file.valueOf());
+    const { types } = this.config;
+    if (!this.config.crawl || types.indexOf(file.type) === -1) {
       return;
     }
 
@@ -35,7 +56,7 @@ class DependencyGraph {
   }
 
   crawl(file) {
-    file.dependencies.filter(filterBuiltIn).forEach(name => {
+    file.dependencies.forEach(name => {
       this.add(file.dirname, name);
     });
   }

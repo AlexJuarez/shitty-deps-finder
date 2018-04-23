@@ -2,12 +2,17 @@ const Path = require('./Path');
 const getSource = require('../util/getSource');
 const getDependencies = require('../util/getDependencies');
 const fs = require('fs');
+const { type } = require('../util/resolve/types');
+const { getPkgRoot } = require('../util/getPkgRoot');
+
+const getRelative = path => path && path.replace(getPkgRoot(), '.');
 
 class File {
   constructor(cwd, name, path, source, dependencies) {
     this._path = new Path(cwd, name, path);
     this._source = source;
     this._dependencies = dependencies;
+    this._type;
   }
 
   get source() {
@@ -24,6 +29,10 @@ class File {
     }
 
     return this._dependencies;
+  }
+
+  get basename() {
+    return this._path.basename;
   }
 
   get dirname() {
@@ -46,12 +55,21 @@ class File {
     return this._path.name;
   }
 
+  get type(){
+    if (this._type == null) {
+      this._type = type(this.name, this.path);
+    }
+
+    return this._type;
+  }
+
   valueOf() {
     return {
-      path: this.path,
-      cwd: this.cwd,
+      path: getRelative(this.path),
+      cwd: getRelative(this.cwd),
       name: this.name,
       dependencies: this.dependencies,
+      type: this.type,
     };
   }
 }

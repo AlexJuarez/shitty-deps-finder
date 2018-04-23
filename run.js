@@ -15,18 +15,6 @@ const Run = (file, opts) => {
   const runner = new Runner(opts);
   runner.start(fp);
   const start = new Date();
-  dependencyGraph.configure({
-    directories: ['./src/'],  // default
-    recursiveDeps: true,  // default
-    useLocalDiskCache: false, // default
-    useInMemoryCache: true, // default
-    cacheFile: '/tmp/.dg.cache',  // default
-    verbose: false,  // default
-  });
-  dependencyGraph.get().then(depGraph => {
-    console.log(depGraph[fp]);
-    console.log(`time: ${start - new Date()}`);
-  });
 };
 
 module.exports = Run;

@@ -1,11 +1,11 @@
 const fs = require('fs');
-const { join, normalize } = require('path');
-const { dirname, extname } = require('path');
+const { join, normalize, dirname, extname, basename } = require('path');
 const { getPkgRoot } = require('../util/getPkgRoot');
 const memoize = require('../util/memoize');
 const resolver = require('../util/resolve');
 const { expandMonorail, expandProject } = require('../util/pathTransforms');
 const { profileFn } = require('../util/profileFn');
+const { isBuiltIn } = require('../util/resolve/types');
 
 const exists = (path) => fs.existsSync(path);
 
@@ -46,6 +46,10 @@ const isExt = (ext) => (cwd, name) => {
 }
 
 const resolve = profileFn(memoize((cwd, name) => {
+  if (isBuiltIn(name)) {
+    return name;
+  }
+
   const possiblePaths = [
     isExt('.js'),
     isExt('.jsx'),
@@ -69,6 +73,10 @@ class Path {
     this.cwd = cwd;
     this.name = name;
     this.path = path;
+  }
+
+  get basename() {
+    return basename(this.path);
   }
 
   get dir() {

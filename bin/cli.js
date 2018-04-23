@@ -14,7 +14,7 @@ program
 
 program
   .usage('<file> [options]')
-  .option('-t, --types <types>', 'Specify file types to include default includes all', typesValidation, [...types])
+  .option('-t, --types <types>', 'Specify file types to include default includes all', typesValidation)
   .option('--no-cache', 'Don\'t use a local cache')
   .option('--cache-file <cache>', 'cache filename', '/tmp/.df.cache.json')
   .option('--no-crawl', 'don\'t crawl dependencies')

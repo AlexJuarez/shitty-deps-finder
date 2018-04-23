@@ -9,9 +9,9 @@ class Runner {
 
   start(fp) {
     this.dependencies.add(dirname(fp), basename(fp), fp);
-    console.log(`found ${this.dependencies.toArray().length} dependencies`);
-    console.log(this.dependencies.toArray().map(f => f.path));
-    console.debug(getProfiles());
+    const dependencies = this.dependencies.toArray();
+    console.log(`found ${dependencies.length} dependencies`);
+    console.log(this.dependencies.getGraph(fp));
   }
 }
 

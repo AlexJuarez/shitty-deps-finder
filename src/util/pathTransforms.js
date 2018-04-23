@@ -28,7 +28,7 @@ const expandMonorail = (name) => {
 }
 
 const expandProject = (name) => {
-  if (type(name) === 'project') {
+  if (name.startsWith(':')) {
     return getProjectMainPath(name);
   }
 

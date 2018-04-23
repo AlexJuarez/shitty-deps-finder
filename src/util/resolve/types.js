@@ -2,24 +2,20 @@ const { join } = require('path');
 const builtinModules = require('builtin-modules');
 
 function isAbsolute(name) {
-  return name.indexOf('/') === 0;
+  return name.startsWith('/');
 }
 
 function isBuiltIn(name) {
   return builtinModules.indexOf(name) !== -1;
 }
 
-function isProjectRoot(name) {
-  return name.startsWith(':');
-}
-
-function isExternalPath(name, cwd) {
-  return !cwd || cwd.indexOf(join('node_modules', name)) > -1;
+function isExternalPath(name, path) {
+  return !path || path.indexOf('node_modules') !== -1;
 }
 
 const externalModuleRegExp = /^\w/;
-function isExternalModule(name, cwd) {
-  return externalModuleRegExp.test(name) && isExternalPath(name, cwd);
+function isExternalModule(name, path) {
+  return externalModuleRegExp.test(name) && isExternalPath(name, path);
 }
 
 const scopedRegExp = /^@\w+\/\w+/;
@@ -27,8 +23,8 @@ function isScoped(name) {
   return scopedRegExp.test(name);
 }
 
-function isInternalModule(name, cwd) {
-  return externalModuleRegExp.test(name) && !isExternalPath(name, cwd);
+function isInternalModule(name, path) {
+  return externalModuleRegExp.test(name) && !isExternalPath(name, path);
 }
 
 function isRelativeToParent(name) {
@@ -48,19 +44,19 @@ const rules = [
   [isBuiltIn, 'builtin'],
   [isExternalModule, 'external'],
   [isScoped, 'external'],
-  [isProjectRoot, 'project'],
   [isInternalModule, 'internal'],
   [isRelativeToParent, 'parent'],
   [isIndex, 'index'],
-  [isRelativeToSibling, 'sibling']
+  [isRelativeToSibling, 'sibling'],
+  [isAbsolute, 'absolute'],
 ];
 
 const types = rules.map(rule => rule[1]);
 
-function type(name, cwd) {
+function type(name, path) {
   for (let i = 0; i < rules.length; i++) {
     const [rule, type] = rules[i];
-    if(rule(name, cwd)) {
+    if(rule(name, path)) {
       return type;
     }
   }
@@ -71,10 +67,7 @@ function type(name, cwd) {
 module.exports = {
   type,
   types,
-  isAbsolute,
   isBuiltIn,
-  isProjectRoot,
-  isExternalPath,
   isExternalModule,
   isScoped,
   isInternalModule,
