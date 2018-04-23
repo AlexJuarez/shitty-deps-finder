@@ -3,17 +3,17 @@ class FileStore {
     this.files = {};
   }
 
-  get(file) {
-    return this.files[file.path];
+  get(key) {
+    return this.files[key];
   }
 
-  has(file) {
-    return this.files[file.name] != null || this.files[file.path] != null;
+  has(key) {
+    return this.files[key] != null;
   }
 
-  add(file) {
-    if (!this.has(file)) {
-      this.files[file.path] = file;
+  add(key, file) {
+    if (!this.has(key)) {
+      this.files[key] = file;
     }
   }
 

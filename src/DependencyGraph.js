@@ -13,10 +13,8 @@ class DependencyGraph {
     this.files = new FileList();
   }
 
-  find(cwd, name) {
-    const file = new File(cwd, name);
-    
-    return this.files.get(file);
+  get(fp) {
+    return this.files.get(fp).valueOf();
   }
 
   add(cwd, name, path) {
@@ -28,7 +26,8 @@ class DependencyGraph {
     
     this.files.addFile(file);
 
-    if (!this.config.crawl || isExternalPath(name, file.path)) {
+    if (!this.config.crawl || isExternalPath(file.name, file.path)) {
+      console.log(file.valueOf());
       return;
     }
 

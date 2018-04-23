@@ -7,30 +7,15 @@ class FileList {
   }
 
   addFile(file) {
-    this.store.add(file);
-  }
-
-  getFile(file) {
-    return this.store.get(file);
+    this.store.add(file.path, file);
   }
 
   hasFile(file) {
-    return this.store.has(file);
+    return this.store.has(file.name) || this.store.has(file.path);
   }
 
-  add(cwd, name) {
-    const file = new File(cwd, name);
-    this.store.add(file);
-  }
-
-  has(cwd, name) {
-    const file = new File(cwd, name);
-    return this.store.has(file);
-  }
-
-  get(cwd, name) {
-    const file = new File(cwd, name);
-    return this.store.get(file);
+  get(fp) {
+    return this.store.get(fp);
   }
 
   toArray() {
