@@ -26,7 +26,7 @@ class DependencyGraph {
     
     this.files.addFile(file);
 
-    if (!this.config.crawl || isExternalPath(file.name, file.path)) {
+    if (!this.config.crawl || isExternalModule(name, cwd)) {
       console.log(file.valueOf());
       return;
     }
