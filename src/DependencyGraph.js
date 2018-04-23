@@ -36,7 +36,7 @@ class DependencyGraph {
   }
 
   add(cwd, name, path) {
-    const file = new File(cwd, name, path);
+    const file = new File(cwd, name, this.config.resolver(cwd, name) || path);
     
     if (this.files.hasFile(file)) {
       return;

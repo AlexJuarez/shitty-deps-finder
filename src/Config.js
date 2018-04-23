@@ -5,6 +5,7 @@ class Config {
     this.crawl = !opts.noCrawl;
     this.types = opts.types || ['internal', 'parent', 'index', 'sibling', 'absolute'];
     this.verbose = !!opts.verbose;
+    this.resolver = opts.resolver || ((...args) => null);
   }
 }
 
