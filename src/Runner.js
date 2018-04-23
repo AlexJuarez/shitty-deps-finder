@@ -11,7 +11,7 @@ class Runner {
     this.dependencies.add(dirname(fp), basename(fp), fp);
     const dependencies = this.dependencies.toArray();
     console.log(`found ${dependencies.length} dependencies`);
-    console.log(this.dependencies.getGraph(fp));
+    console.log(this.dependencies.summary(fp));
   }
 }
 

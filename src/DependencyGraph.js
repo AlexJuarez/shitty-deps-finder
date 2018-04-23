@@ -9,10 +9,7 @@ const makeGraph = files => {
   const graph = {};
 
   files.forEach(file => {
-    graph[file.path] = {
-      cwd: file.cwd,
-      dependencies: file.dependencies,
-    };
+    graph[file.path] = file.dependencies;
   });
 
   return graph;
@@ -24,7 +21,7 @@ class DependencyGraph {
     this.files = new FileList();
   }
 
-  getGraph(fp) {
+  summary(fp) {
     const dependencies = this.toArray();
     const relative = dependencies.filter(file => !isExternal(file));
     const absolute = dependencies.filter(isExternal);
