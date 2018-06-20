@@ -11,7 +11,7 @@ module.exports = (cwd, name) => {
     opts = {
       paths: [],
       modulesDirectories: [join(getPkgRoot(), 'node_modules')], // (default) only node_modules
-      extensions: ['', '.js', '.jsx'], // these extension
+      extensions: ['', '.js', '.jsx', '.ts', '.tsx'], // these extension
       fileSystem: fs,
       useSyncFileSystemCalls: true,
     };

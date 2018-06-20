@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('graceful-fs');
 
 function getSource(path) {
   if (path == null || !fs.existsSync(path)) {

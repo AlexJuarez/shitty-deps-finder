@@ -1,7 +1,7 @@
 const FileList = require('./FileList');
 const File = require('./store/File');
 const Config = require('./Config');
-const { getPkgRoot, setPkgRoot } = require('./util/getPkgRoot');
+const { setPkgRoot } = require('./util/getPkgRoot');
 const { dirname, basename } = require('path');
 const mm = require('minimatch');
 
@@ -18,7 +18,7 @@ const makeGraph = files => {
 };
 
 class DependencyGraph {
-  constructor(opts) {
+  constructor(opts = {}) {
     this.config = new Config(opts);
     this.files = new FileList();
 
@@ -53,6 +53,26 @@ class DependencyGraph {
     }
 
     return files.toArray();
+  }
+
+  toGraph() {
+    const files = this.files.toArray();
+    const graph = {};
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      file.dependencies.forEach(name => {
+        const dep = this.files.getFile(file.cwd, name);
+
+        if (graph[dep.path] == null) {
+          graph[dep.path] = [];
+        }
+
+        graph[dep.path].push(file.path);
+      });
+    }
+
+    return graph;
   }
 
   addPath(path) {

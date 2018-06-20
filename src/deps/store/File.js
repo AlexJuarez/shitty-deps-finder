@@ -64,8 +64,8 @@ class File {
 
   valueOf() {
     return {
-      path: getRelative(this.path),
-      cwd: getRelative(this.cwd),
+      path: this.path,
+      cwd: this.cwd,
       name: this.name,
       dependencies: this.dependencies,
       type: this.type,
