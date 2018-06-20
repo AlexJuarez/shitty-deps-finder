@@ -1,4 +1,3 @@
-const File = require('./store/File');
 const FileStore = require('./store/FileStore');
 
 class FileList {

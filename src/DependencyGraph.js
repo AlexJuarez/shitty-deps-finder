@@ -2,7 +2,7 @@ const FileList = require('./FileList');
 const File = require('./store/File');
 const Config = require('./Config');
 const { getPkgRoot, setPkgRoot } = require('./util/getPkgRoot');
-const { join, dirname, basename, sep } = require('path');
+const { dirname, basename } = require('path');
 
 const isExternal = file => ['builtin', 'external'].indexOf(file.type) !== -1;
 
@@ -14,7 +14,7 @@ const makeGraph = files => {
   });
 
   return graph;
-}
+};
 
 class DependencyGraph {
   constructor(opts) {
@@ -46,25 +46,12 @@ class DependencyGraph {
 
   add(cwd, name, path) {
     const file = new File(cwd, name, path);
-    
+
     if (this.files.hasFile(file)) {
       return;
     }
-    
+
     this.files.addFile(file);
-
-    const { types } = this.config;
-    if (!this.config.crawl || types.indexOf(file.type) === -1) {
-      return;
-    }
-
-    this.crawl(file);
-  }
-
-  crawl(file) {
-    file.dependencies.forEach(name => {
-      this.add(file.dirname, name);
-    });
   }
 
   toArray() {

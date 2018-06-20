@@ -23,13 +23,13 @@ const setPkgRoot = (file) => {
   if (PKG_ROOT == null) {
     PKG_ROOT = findPkgRoot(file);
   }
-}
+};
 
 const getPkgRoot = () => {
   return PKG_ROOT;
-}
+};
 
 module.exports =  {
-  getPkgRoot, 
-  setPkgRoot 
+  getPkgRoot,
+  setPkgRoot
 };

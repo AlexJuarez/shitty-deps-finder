@@ -2,7 +2,7 @@ const path = require('path');
 const { setPkgRoot } = require('./src/util/getPkgRoot');
 const Runner = require('./src/Runner');
 
-const dependencyGraph = require('@irbnb/dependency-graph')
+const dependencyGraph = require('@irbnb/dependency-graph');
 
 const DEV_MODE = (process.env.NODE_ENV !== 'production');
 
@@ -14,7 +14,6 @@ const Run = (file, opts) => {
 
   const runner = new Runner(opts);
   runner.start(fp);
-  const start = new Date();
 };
 
 module.exports = Run;

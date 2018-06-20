@@ -10,13 +10,13 @@ const readProjectConfig = (dir) => {
   } catch (err) {
     return {};
   }
-}
+};
 
 const getProjectMainPath = (name) => {
   const dir = path.resolve(getPkgRoot(), 'frontend', name.replace(':', ''));
   const config = readProjectConfig(dir);
   const { main } = config;
-  return main != null ? path.join(dir, main) : dir;  
+  return main != null ? path.join(dir, main) : dir;
 };
 
 const expandMonorail = (name) => {
@@ -25,7 +25,7 @@ const expandMonorail = (name) => {
   }
 
   return name;
-}
+};
 
 const expandProject = (name) => {
   if (name.startsWith(':')) {
@@ -33,7 +33,7 @@ const expandProject = (name) => {
   }
 
   return name;
-}
+};
 
 module.exports = {
   expandMonorail,

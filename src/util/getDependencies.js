@@ -3,7 +3,7 @@ const walk = require('babylon-walk');
 const parser = require('../parser/babylon');
 const { profileFn } = require('../util/profileFn');
 
-const isStringLiteral = (node) => 
+const isStringLiteral = (node) =>
   node.type === 'Literal' || node.type === 'StringLiteral';
 
 const getImports = (ast) => {
@@ -20,7 +20,7 @@ const getImports = (ast) => {
   walk.simple(ast, visitors, state);
 
   return state.dependencies;
-}
+};
 
 const getRequire = (ast) => {
   const state = {
@@ -45,7 +45,7 @@ const getRequire = (ast) => {
   walk.simple(ast, visitors, state);
 
   return state.dependencies;
-}
+};
 
 const getDependencies = (source) => {
   const ast = parser.parse(source);

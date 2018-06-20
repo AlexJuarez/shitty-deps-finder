@@ -24,7 +24,7 @@ const applyTransforms = (name) => {
   }
 
   return result;
-}
+};
 
 let nodePath;
 const isNodeModule = (cwd, name) => {
@@ -36,14 +36,14 @@ const isNodeModule = (cwd, name) => {
   if (exists(path)) {
     return name;
   }
-}
+};
 
 const isExt = (ext) => (cwd, name) => {
   const path = createPath(cwd, name + ext);
   if (exists(path)) {
     return path;
   }
-}
+};
 
 const resolve = profileFn(memoize((cwd, name) => {
   if (isBuiltIn(name)) {
@@ -55,7 +55,7 @@ const resolve = profileFn(memoize((cwd, name) => {
     isExt('.jsx'),
     isNodeModule,
   ];
-  const resolvedName = applyTransforms(name); 
+  const resolvedName = applyTransforms(name);
 
   while (possiblePaths.length) {
     const fn = possiblePaths.shift();
