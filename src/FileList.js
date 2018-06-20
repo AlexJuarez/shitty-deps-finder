@@ -13,6 +13,10 @@ class FileList {
     return this.store.has(file.name) || this.store.has(file.path);
   }
 
+  has(fp) {
+    return this.store.has(fp);
+  }
+
   get(fp) {
     return this.store.get(fp);
   }

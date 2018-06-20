@@ -41,11 +41,16 @@ class DependencyGraph {
   }
 
   addPath(path) {
-    this.add(dirname(path), basename(path), path);
+    if (this.files.has(path)) {
+      return;
+    }
+
+    const file = new File(dirname(path), basename(path), path);
+    this.files.addFile(file);
   }
 
-  add(cwd, name, path) {
-    const file = new File(cwd, name, path);
+  add(cwd, name) {
+    const file = new File(cwd, name);
 
     if (this.files.hasFile(file)) {
       return;

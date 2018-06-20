@@ -1,7 +1,6 @@
 const Path = require('./Path');
 const getSource = require('../util/getSource');
 const getDependencies = require('../util/getDependencies');
-const fs = require('fs');
 const { type } = require('../util/resolve/types');
 const { getPkgRoot } = require('../util/getPkgRoot');
 
