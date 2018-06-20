@@ -6,6 +6,7 @@ class Config {
     this.verbose = !!opts.verbose;
     this.resolver = opts.resolver || ((...args) => null);
     this.root = opts.root;
+    this.excludes = opts.excludes || ['**/node_modules/**'];
   }
 }
 

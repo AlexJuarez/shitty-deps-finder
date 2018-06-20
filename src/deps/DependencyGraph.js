@@ -3,6 +3,7 @@ const File = require('./store/File');
 const Config = require('./Config');
 const { getPkgRoot, setPkgRoot } = require('./util/getPkgRoot');
 const { dirname, basename } = require('path');
+const mm = require('minimatch');
 
 const isExternal = file => ['builtin', 'external'].indexOf(file.type) !== -1;
 
@@ -26,18 +27,32 @@ class DependencyGraph {
     }
   }
 
-  summary(fp) {
-    const dependencies = this.toArray();
-    const relative = dependencies.filter(file => !isExternal(file));
-    const absolute = dependencies.filter(isExternal);
+  isExcluded(file) {
+    return this.config.excludes.some(pattern => mm(file.path, pattern));
+  }
 
-    return {
-      root: getPkgRoot(),
-      filePath: fp,
-      relative: relative.map(f => f.path),
-      absolute: absolute.map(f => f.path),
-      graph: makeGraph(relative),
-    };
+  getAllDependencies(fp) {
+    const files = new FileList();
+    const queue = [new File(dirname(fp), basename(fp), fp)];
+    while (queue.length) {
+      let file = queue.pop();
+
+      if (files.hasFile(file) || this.isExcluded(file)) {
+        continue;
+      }
+
+      if (this.files.hasFile(file)) {
+        file = this.files.get(file.path);
+      }
+      files.addFile(file);
+      const cwd = dirname(file.path);
+      file.dependencies.forEach(name => {
+        const dep = new File(cwd, name);
+        queue.push(dep);
+      });
+    }
+
+    return files.toArray();
   }
 
   addPath(path) {

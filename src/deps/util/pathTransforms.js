@@ -2,11 +2,12 @@ const path = require('path');
 const fs = require('fs');
 const { type } = require('./resolve/types');
 const { getPkgRoot } = require('./getPkgRoot');
+const RJSON = require('relaxed-json');
 
 const readProjectConfig = (dir) => {
   const file = ['.projectrc', 'project.json5'].map(f => path.join(dir,f)).filter(fs.existsSync).shift();
   try {
-    return file != null && JSON.parse(fs.readFileSync(file, { encoding: 'utf8' }));
+    return file != null && RJSON.parse(fs.readFileSync(file, { encoding: 'utf8' }));
   } catch (err) {
     return {};
   }

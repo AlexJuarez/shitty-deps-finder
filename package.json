@@ -7,8 +7,13 @@
     "dependency-finder": "cli.js"
   },
   "dependencies": {
+    "babylon": "^6.18.0",
+    "babylon-walk": "^1.0.2",
     "bluebird": "^3.5.1",
+    "builtin-modules": "^2.0.0",
     "chokidar": "^2.0.3",
+    "commander": "^2.15.1",
+    "enhanced-resolve": "^4.0.0",
     "expand-braces": "^0.1.2",
     "fast-glob": "^2.2.0",
     "glob": "^7.1.2",
@@ -20,11 +25,7 @@
     "lodash.uniq": "^4.5.0",
     "minimatch": "^3.0.4",
     "node-glob": "^1.2.0",
-    "babylon": "^6.18.0",
-    "babylon-walk": "^1.0.2",
-    "builtin-modules": "^2.0.0",
-    "commander": "^2.15.1",
-    "enhanced-resolve": "^4.0.0"
+    "relaxed-json": "^1.0.1"
   },
   "devDependencies": {},
   "scripts": {

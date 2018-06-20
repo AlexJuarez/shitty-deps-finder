@@ -11,15 +11,15 @@ module.exports = (cwd, name) => {
     opts = {
       paths: [],
       modulesDirectories: [join(getPkgRoot(), 'node_modules')], // (default) only node_modules
-      extensions: ['', '.node', '.js', '.jsx', '.es6.js', '.json'], // these extension
+      extensions: ['', '.js', '.jsx'], // these extension
       fileSystem: fs,
       useSyncFileSystemCalls: true,
     };
   }
-  
+
   if (resolver == null) {
     resolver = ResolverFactory.createResolver(opts);
-  } 
+  }
 
   try {
     return resolver.resolveSync({}, cwd, name);

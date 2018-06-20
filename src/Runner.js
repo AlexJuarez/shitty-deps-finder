@@ -9,10 +9,10 @@ class Runner {
   }
 
   start(fp) {
-    VFS.async(['**/*.js'], { cwd: getPkgRoot(), exclude: ['**/node_modules/**'] }).then((files) => {
+    VFS.async(['frontend/**/*.{js,jsx}'], { cwd: getPkgRoot() }).then((files) => {
       files.forEach(file => this.deps.addPath(file.path));
       console.log(`found ${files.length} files`);
-      console.log(this.deps.summary(fp));
+      console.log(this.deps.getAllDependencies(fp));
       getProfiles();
     });
   }
