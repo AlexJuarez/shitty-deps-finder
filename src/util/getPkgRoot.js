@@ -6,7 +6,7 @@ const path = require('path');
 let PKG_ROOT = null;
 
 const findPkgRoot = (fp) => {
-  let root = path.dirname(fp);
+  let root = fp;
   while (root.length) {
     const pkgPath = path.resolve(root, 'package.json');
 

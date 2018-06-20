@@ -35,7 +35,7 @@ class DependencyGraph {
       root: getPkgRoot(),
       filePath: fp,
       relative: relative.map(f => f.path),
-      absolute: absolute.map(f => f.name),
+      absolute: absolute.map(f => f.path),
       graph: makeGraph(relative),
     };
   }
