@@ -1,7 +1,7 @@
 const walk = require('babylon-walk');
 
 const parser = require('../parser/babylon');
-const { profileFn } = require('../util/profileFn');
+const { profileFn } = require('./profileFn');
 
 const isStringLiteral = (node) =>
   node.type === 'Literal' || node.type === 'StringLiteral';

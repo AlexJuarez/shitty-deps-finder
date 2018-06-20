@@ -3,7 +3,7 @@ const program = require('commander');
 
 const pkg = require('./../package.json');
 const Run = require('./../run');
-const { types } = require('../src/util/resolve/types');
+const { types } = require('../src/deps/util/resolve/types');
 
 function typesValidation(str) {
   return str.split(/,/g).every(type => types.indexOf(type) !== -1);

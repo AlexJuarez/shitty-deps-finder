@@ -1,17 +1,20 @@
-const DependencyGraph = require('./DependencyGraph');
-const { dirname, basename } = require('path');
-const { getProfiles } = require('./util/profileFn');
+const DependencyGraph = require('./deps/DependencyGraph');
+const VFS = require('./vfs');
+const { getProfiles } = require('./deps/util/profileFn');
+const { getPkgRoot } = require('./deps/util/getPkgRoot');
 
 class Runner {
   constructor(opts) {
-    this.dependencies = new DependencyGraph(opts);
+    this.deps = new DependencyGraph(opts);
   }
 
   start(fp) {
-    this.dependencies.add(dirname(fp), basename(fp), fp);
-    const dependencies = this.dependencies.toArray();
-    console.log(`found ${dependencies.length} dependencies`);
-    console.log(this.dependencies.summary(fp));
+    VFS.async(['**/*.js'], { cwd: getPkgRoot(), exclude: ['**/node_modules/**'] }).then((files) => {
+      files.forEach(file => this.deps.addPath(file.path));
+      console.log(`found ${files.length} files`);
+      console.log(this.deps.summary(fp));
+      getProfiles();
+    });
   }
 }
 
