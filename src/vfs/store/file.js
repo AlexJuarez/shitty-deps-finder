@@ -112,7 +112,7 @@ class FileStore extends Store {
 
   hydrate(json) {
     Object.keys(json).forEach(pattern => {
-      const files = json[pattern].map((file) => File.hydrate(file));
+      const files = json[pattern].map((file) => File.create(file));
       this.set(pattern, files);
     });
   }

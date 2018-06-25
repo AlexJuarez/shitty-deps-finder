@@ -15,7 +15,7 @@ const patterns = [
   'frontend/**/*.{js,jsx,ts,tsx}',
 ];
 
-VFS.async(patterns, { cwd: getPkgRoot() }).then((files) => {
+VFS.async(patterns, { cwd: getPkgRoot(), cacheFile: '/tmp/.changes.cache.json' }).then((files) => {
   files.forEach(file => deps.addPath(file.path));
   deps.dump();
   console.log(`found ${files.length} files`);

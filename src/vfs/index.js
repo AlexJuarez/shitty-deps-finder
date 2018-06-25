@@ -3,6 +3,7 @@
 const Tracker = require('./tracker');
 const Promise = require('bluebird');
 const log = require('./logger');
+const fs = require('graceful-fs');
 
 const DEFAULT_OPTS = {
   watch: false,
@@ -20,8 +21,17 @@ class Index {
 
     const tracker = new Tracker(config);
 
+    if (opts.cacheFile && fs.existsSync(opts.cacheFile)) {
+      const json = JSON.parse(fs.readFileSync(opts.cacheFile, 'utf8'));
+      tracker.hydrate(json);
+    }
+
     return new Promise((resolve, reject) => {
       tracker.once('changed', (files) => {
+        if (opts.cacheFile) {
+          fs.writeFileSync(opts.cacheFile, tracker.dumpStore());
+        }
+
         resolve(files);
       });
 

@@ -36,10 +36,6 @@ class DependencyGraph {
   }
 
   addPath(path) {
-    if (this.files.has(path)) {
-      return;
-    }
-
     const file = new File(dirname(path), basename(path), path);
     this.files.addFile(file);
   }
