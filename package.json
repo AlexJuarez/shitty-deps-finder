@@ -1,10 +1,10 @@
 {
   "name": "@irbnb/dependency-finder",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "./src/index.js",
   "bin": {
-    "dependency-finder": "cli.js"
+    "dependency-finder": "./bin/cli.js"
   },
   "dependencies": {
     "babylon": "^6.18.0",
