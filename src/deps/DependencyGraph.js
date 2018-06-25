@@ -5,18 +5,6 @@ const { setPkgRoot } = require('./util/getPkgRoot');
 const { dirname, basename } = require('path');
 const mm = require('minimatch');
 
-const isExternal = file => ['builtin', 'external'].indexOf(file.type) !== -1;
-
-const makeGraph = files => {
-  const graph = {};
-
-  files.forEach(file => {
-    graph[file.path] = file.dependencies;
-  });
-
-  return graph;
-};
-
 class DependencyGraph {
   constructor(opts = {}) {
     this.config = new Config(opts);

@@ -16,5 +16,5 @@ const patterns = [
 VFS.async(patterns, { cwd: getPkgRoot() }).then((files) => {
   files.forEach(file => deps.addPath(file.path));
   console.log(`found ${files.length} files`);
-  console.log(deps.toGraph());
+  deps.toGraph();
 });

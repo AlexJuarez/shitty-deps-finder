@@ -1,5 +1,10 @@
 const FileStore = require('./store/FileStore');
 const File = require('./store/File');
+const path = require('path');
+
+const keyFn = (cwd, name) => {
+  return path.normalize(cwd, name);
+};
 
 class FileList {
   constructor() {
@@ -7,6 +12,9 @@ class FileList {
   }
 
   addFile(file) {
+    const key = keyFn(file.cwd, file.name);
+
+    this.store.add(key, file);
     this.store.add(file.path, file);
   }
 
@@ -17,6 +25,11 @@ class FileList {
   getFile(cwd, name) {
     if (this.store.has(name)) {
       return this.store.get(name);
+    }
+
+    const key = keyFn(cwd, name);
+    if (this.store.has(key)) {
+      return this.store.get(key);
     }
 
     const file = new File(cwd, name);
