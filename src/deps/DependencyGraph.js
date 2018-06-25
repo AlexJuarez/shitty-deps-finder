@@ -25,10 +25,10 @@ class DependencyGraph {
         const dep = this.files.getFile(file.cwd, name);
 
         if (graph[dep.path] == null) {
-          graph[dep.path] = [];
+          graph[dep.path] = new Set();
         }
 
-        graph[dep.path].push(file.path);
+        graph[dep.path].add(file.path);
       });
     }
 
