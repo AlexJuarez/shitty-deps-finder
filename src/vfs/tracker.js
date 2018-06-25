@@ -30,6 +30,7 @@ class Tracker extends EventEmitter {
 
   hydrate(json) {
     this._fileList.getStore().hydrate(json);
+    this._files = this._fileList.files().slice(0);
   }
 
   diff(files) {

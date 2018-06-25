@@ -27,7 +27,7 @@ const applyTransforms = (name) => {
 };
 
 let nodePath;
-const isNodeModule = (cwd, name) => {
+const isNodeModule = (c, n) => memoize((name) => {
   if (nodePath == null) {
     nodePath = createPath(getPkgRoot(), 'node_modules');
   }
@@ -36,6 +36,14 @@ const isNodeModule = (cwd, name) => {
   if (exists(path)) {
     return name;
   }
+})(n);
+
+const create = (cwd, name) => {
+  if (isNodeModule(cwd, name)) {
+    return name;
+  }
+
+  return createPath(cwd, applyTransforms(name));
 };
 
 const isExt = (ext) => (cwd, name) => {
@@ -73,6 +81,10 @@ class Path {
     this.cwd = cwd;
     this.name = name;
     this.path = path;
+  }
+
+  static create(cwd, name) {
+    return create(cwd, name);
   }
 
   get basename() {

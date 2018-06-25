@@ -19,6 +19,5 @@ VFS.async(patterns, { cwd: getPkgRoot(), cacheFile: '/tmp/.changes.cache.json' }
   files.forEach(file => deps.addPath(file.path));
   deps.dump();
   console.log(`found ${files.length} files`);
-  console.log(deps.toGraph());
   getProfiles();
 });

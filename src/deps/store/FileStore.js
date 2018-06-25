@@ -18,7 +18,7 @@ class FileStore {
   }
 
   toArray() {
-    return Object.values(this.files);
+    return Object.values(this.files).map(file => file.valueOf());
   }
 }
 
