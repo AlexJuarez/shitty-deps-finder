@@ -7,6 +7,7 @@ const { getProfiles } = require('./src/deps/util/profileFn');
 setPkgRoot(path.resolve('../airbnb/'));
 
 const deps = new DependencyGraph();
+deps.hydrate();
 
 const patterns = [
   'app/assets/javascripts/**/*.{js,jsx,ts,tsx}',
@@ -16,6 +17,7 @@ const patterns = [
 
 VFS.async(patterns, { cwd: getPkgRoot() }).then((files) => {
   files.forEach(file => deps.addPath(file.path));
+  deps.dump();
   console.log(`found ${files.length} files`);
   deps.toGraph();
   getProfiles();

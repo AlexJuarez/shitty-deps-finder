@@ -3,6 +3,7 @@ const File = require('./store/File');
 const Config = require('./Config');
 const { setPkgRoot } = require('./util/getPkgRoot');
 const { dirname, basename } = require('path');
+const fs = require('graceful-fs');
 
 class DependencyGraph {
   constructor(opts = {}) {
@@ -51,6 +52,22 @@ class DependencyGraph {
     }
 
     this.files.addFile(file);
+  }
+
+  hydrate() {
+    if (!fs.existsSync(this.config.cacheFile)) {
+      return;
+    }
+
+    const json = fs.readFileSync(this.config.cacheFile, 'utf8');
+    JSON.parse(json).forEach(f => {
+      this.files.addFile(new File(f.cwd, f.name, f.path, f.dependencies, f.type));
+    });
+  }
+
+  dump() {
+    const output = JSON.stringify(this.files.toArray().map(f => f.valueOf()));
+    fs.writeFileSync(this.config.cacheFile, output);
   }
 
   toArray() {

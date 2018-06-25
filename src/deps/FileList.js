@@ -1,7 +1,6 @@
 const FileStore = require('./store/FileStore');
 const File = require('./store/File');
 const path = require('path');
-const { profileFn } = require('./util/profileFn');
 
 const keyFn = (cwd, name) => {
   return path.normalize(cwd, name);

@@ -4,11 +4,11 @@ const getDependencies = require('../util/getDependencies');
 const { type } = require('../util/resolve/types');
 
 class File {
-  constructor(cwd, name, path, source, dependencies) {
+  constructor(cwd, name, path, dependencies, type) {
     this._path = new Path(cwd, name, path);
-    this._source = source;
     this._dependencies = dependencies;
-    this._type;
+    this._type = type;
+    this._source = null;
   }
 
   get source() {
