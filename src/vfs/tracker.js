@@ -37,15 +37,19 @@ class Tracker extends EventEmitter {
     const self = this;
     const changed = [];
 
+    const map = {};
+    for( let i = 0; i < self._files.length; i++ ) {
+      const file = self._files[i];
+      map[file.path] = file;
+    }
+
     files.forEach((file) => {
-      let index = self._files.indexOf(file);
-      if (index > -1) {
-        if (self._files[index].mtime < file.mtime) {
-          changed.push(file);
-        }
-      } else {
-        changed.push(file);
+      const prev = map[file.path];
+      if (prev != null && prev.mtime >= file.mtime) {
+        return;
       }
+
+      changed.push(file);
     });
 
     this._files = files.slice(0);
