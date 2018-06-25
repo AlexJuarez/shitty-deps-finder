@@ -2,9 +2,6 @@ const Path = require('./Path');
 const getSource = require('../util/getSource');
 const getDependencies = require('../util/getDependencies');
 const { type } = require('../util/resolve/types');
-const { getPkgRoot } = require('../util/getPkgRoot');
-
-const getRelative = path => path && path.replace(getPkgRoot(), '.');
 
 class File {
   constructor(cwd, name, path, source, dependencies) {

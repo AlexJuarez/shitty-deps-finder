@@ -18,7 +18,7 @@ const sp = new Date();
 
 function getProfiles() {
   console.log(`time elapsed: ${new Date() - sp}ms`);
-  return profiles;
+  console.log(profiles);
 }
 
 module.exports.profileFn = profileFn;

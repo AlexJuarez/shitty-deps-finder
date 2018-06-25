@@ -3,7 +3,6 @@ const File = require('./store/File');
 const Config = require('./Config');
 const { setPkgRoot } = require('./util/getPkgRoot');
 const { dirname, basename } = require('path');
-const mm = require('minimatch');
 
 class DependencyGraph {
   constructor(opts = {}) {
@@ -13,34 +12,6 @@ class DependencyGraph {
     if (this.config.root) {
       setPkgRoot(this.config.root);
     }
-  }
-
-  isExcluded(file) {
-    return this.config.excludes.some(pattern => mm(file.path, pattern));
-  }
-
-  getAllDependencies(fp) {
-    const files = new FileList();
-    const queue = [new File(dirname(fp), basename(fp), fp)];
-    while (queue.length) {
-      let file = queue.pop();
-
-      if (files.hasFile(file) || this.isExcluded(file)) {
-        continue;
-      }
-
-      if (this.files.hasFile(file)) {
-        file = this.files.get(file.path);
-      }
-      files.addFile(file);
-      const cwd = dirname(file.path);
-      file.dependencies.forEach(name => {
-        const dep = new File(cwd, name);
-        queue.push(dep);
-      });
-    }
-
-    return files.toArray();
   }
 
   toGraph() {

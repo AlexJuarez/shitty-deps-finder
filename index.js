@@ -2,6 +2,7 @@ const DependencyGraph = require('./src/deps/DependencyGraph');
 const VFS = require('./src/vfs');
 const { getPkgRoot, setPkgRoot } = require('./src/deps/util/getPkgRoot');
 const path = require('path');
+const { getProfiles } = require('./src/deps/util/profileFn');
 
 setPkgRoot(path.resolve('../airbnb/'));
 
@@ -17,4 +18,5 @@ VFS.async(patterns, { cwd: getPkgRoot() }).then((files) => {
   files.forEach(file => deps.addPath(file.path));
   console.log(`found ${files.length} files`);
   deps.toGraph();
+  getProfiles();
 });

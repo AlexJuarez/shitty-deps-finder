@@ -1,4 +1,5 @@
 const fs = require('graceful-fs');
+const { profileFn } = require('./profileFn');
 
 function getSource(path) {
   if (path == null || !fs.existsSync(path)) {
@@ -12,4 +13,4 @@ function getSource(path) {
   }
 }
 
-module.exports = getSource;
+module.exports = profileFn(getSource, 'getSource');
