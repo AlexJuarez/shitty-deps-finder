@@ -38,14 +38,6 @@ const isNodeModule = (c, n) => memoize((name) => {
   }
 })(n);
 
-const create = (cwd, name) => {
-  if (isNodeModule(cwd, name)) {
-    return name;
-  }
-
-  return createPath(cwd, applyTransforms(name));
-};
-
 const isExt = (ext) => (cwd, name) => {
   const path = createPath(cwd, name + ext);
   if (exists(path)) {
@@ -83,8 +75,8 @@ class Path {
     this.path = path;
   }
 
-  static create(cwd, name) {
-    return create(cwd, name);
+  static normalize(cwd, name) {
+    return resolve(cwd, name);
   }
 
   get basename() {

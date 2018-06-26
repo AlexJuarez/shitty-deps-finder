@@ -21,8 +21,7 @@ class File {
 
   get dependencies() {
     if (this._dependencies == null) {
-      this._dependencies = getDependencies(this.source)
-        .map(f => Path.create(this.cwd, f));
+      this._dependencies = getDependencies(this.source);
     }
 
     return this._dependencies;

@@ -1,5 +1,6 @@
 const FileList = require('./FileList');
 const File = require('./store/File');
+const Path = require('./store/Path');
 const Config = require('./Config');
 const { setPkgRoot } = require('./util/getPkgRoot');
 const { dirname, basename } = require('path');
@@ -21,12 +22,13 @@ class DependencyGraph {
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
+      graph[file.path] = new Set();
+    }
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
       file.dependencies.forEach(name => {
         const dep = this.files.getFile(file.cwd, name);
-
-        if (graph[dep.path] == null) {
-          graph[dep.path] = new Set();
-        }
 
         graph[dep.path].add(file.path);
       });
@@ -36,6 +38,10 @@ class DependencyGraph {
   }
 
   addPath(path) {
+    if (path.indexOf('luxury-guest') > -1) {
+      console.log(dirname(path), basename(path));
+    }
+
     const file = new File(dirname(path), basename(path), path);
     this.files.addFile(file);
   }
@@ -62,7 +68,11 @@ class DependencyGraph {
   }
 
   dump() {
-    const output = JSON.stringify(this.files.toArray().map(f => f.valueOf()));
+    const output = JSON.stringify(
+      this.files.toArray().map(f => f.valueOf()),
+      null,
+      ' '
+    );
     fs.writeFileSync(this.config.cacheFile, output);
   }
 

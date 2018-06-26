@@ -1,9 +1,9 @@
 const FileStore = require('./store/FileStore');
 const File = require('./store/File');
-const path = require('path');
+const Path = require('path');
 
 const keyFn = (cwd, name) => {
-  return path.normalize(cwd, name);
+  return Path.normalize(cwd, name);
 };
 
 class FileList {
@@ -14,26 +14,25 @@ class FileList {
   addFile(file) {
     const key = keyFn(file.cwd, file.name);
 
+    if (file.path.indexOf('PhotoMosaic') > -1) {
+      console.log(key);
+    }
+
     this.store.add(key, file);
-    this.store.add(file.path, file);
   }
 
   hasFile(file) {
-    return this.store.has(file.name) || this.store.has(file.path);
+    const key = keyFn(file.cwd, file.name);
+    return this.store.has(key);
   }
 
   getFile(cwd, name) {
-    if (this.store.has(name)) {
-      return this.store.get(name);
-    }
-
     const key = keyFn(cwd, name);
     if (this.store.has(key)) {
       return this.store.get(key);
     }
 
-    const file = new File(cwd, name);
-    return this.get(file.path) || file;
+    return new File(cwd, name);
   }
 
   has(fp) {

@@ -10,13 +10,16 @@ const deps = new DependencyGraph();
 deps.hydrate();
 
 const patterns = [
-  'app/assets/javascripts/**/*.{js,jsx,ts,tsx}',
-  'spec/javascripts/**/*.{js,jsx,ts,tsx}',
-  'frontend/**/*.{js,jsx,ts,tsx}',
+  'app/assets/javascripts/**/*.{test,js,jsx,ts,tsx}',
+  'spec/javascripts/**/*.{test,js,jsx,ts,tsx}',
+  'frontend/**/*.{test,js,jsx,ts,tsx}',
 ];
 
 VFS.async(patterns, { cwd: getPkgRoot(), cacheFile: '/tmp/.changes.cache.json' }).then((files) => {
   files.forEach(file => deps.addPath(file.path));
+  [...deps.toArray()].filter((file) => file.name.indexOf('PhotoMosaic') !== -1).forEach(p => {
+    console.log(p);
+  });
   deps.dump();
   console.log(`found ${files.length} files`);
   getProfiles();
