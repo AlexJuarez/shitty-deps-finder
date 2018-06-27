@@ -76,7 +76,11 @@ class Path {
   }
 
   static normalize(cwd, name) {
-    return resolve(cwd, name);
+    if (isBuiltIn(name) || isNodeModule(cwd, name)) {
+      return name;
+    }
+
+    return createPath(cwd, applyTransforms(name));
   }
 
   get basename() {

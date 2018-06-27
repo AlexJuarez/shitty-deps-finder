@@ -22,15 +22,19 @@ class DependencyGraph {
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      graph[file.path] = new Set();
-    }
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
       file.dependencies.forEach(name => {
-        const dep = this.files.getFile(file.cwd, name);
+        const fp = Path.normalize(file.cwd, name);
+        [`${fp}.js`, `${fp}.jsx`].forEach((p) => {
+          if (!this.files.has(p)) {
+            return;
+          }
 
-        graph[dep.path].add(file.path);
+          if (graph[p] == null) {
+            graph[p] = new Set();
+          }
+
+          graph[p].add(file.path);
+        });
       });
     }
 
@@ -38,10 +42,6 @@ class DependencyGraph {
   }
 
   addPath(path) {
-    if (path.indexOf('luxury-guest') > -1) {
-      console.log(dirname(path), basename(path));
-    }
-
     const file = new File(dirname(path), basename(path), path);
     this.files.addFile(file);
   }

@@ -2,11 +2,12 @@ const { join } = require('path');
 const ResolverFactory = require('enhanced-resolve/lib/ResolverFactory');
 const { getPkgRoot } = require('../getPkgRoot');
 const fs = require('fs');
+const memoize = require('../memoize');
 
 let resolver;
 let opts;
 
-module.exports = (cwd, name) => {
+module.exports = memoize((cwd, name) => {
   if (opts == null) {
     opts = {
       paths: [],
@@ -28,4 +29,4 @@ module.exports = (cwd, name) => {
   }
 
   return null;
-};
+});
