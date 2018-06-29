@@ -1,5 +1,6 @@
 # dependency-finder
-outputs a dependency tree for a given file.
+
+A super fast dependency-finder.
 
 ## usage
 

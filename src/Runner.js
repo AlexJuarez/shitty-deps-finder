@@ -12,7 +12,8 @@ class Runner {
     VFS.async(['frontend/**/*.{js,jsx}'], { cwd: getPkgRoot() }).then((files) => {
       files.forEach(file => this.deps.addPath(file.path));
       console.log(`found ${files.length} files`);
-      console.log(this.deps.getAllDependencies(fp));
+      const graph = this.deps.toGraph();
+      console.log(graph[fp]);
       getProfiles();
     });
   }
