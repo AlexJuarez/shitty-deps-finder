@@ -1,5 +1,7 @@
-const { dirname, extname, basename } = require('path');
+const pathLib = require('path');
+const { dirname, extname, basename } = pathLib;
 const resolve = require('../util/resolve/basic');
+const applyTransforms = require('../util/pathTransforms');
 
 class Path {
   constructor({ cwd, name, path }) {
@@ -8,6 +10,12 @@ class Path {
     if (this.path == null) {
       this.path = resolve(cwd, name);
     }
+  }
+
+  static normalize(cwd, name) {
+    const expandedName = applyTransforms(name);
+
+    return expandedName === name ? pathLib.resolve(cwd, name) : expandedName;
   }
 
   get basename() {
