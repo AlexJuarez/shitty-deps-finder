@@ -26,7 +26,6 @@ const applyTransforms = (name) => {
   return result;
 };
 
-let nodePath;
 const isNodeModule = (c, n) => memoize((name) => {
   if (nodePath == null) {
     nodePath = createPath(getPkgRoot(), 'node_modules');
@@ -76,10 +75,6 @@ class Path {
   }
 
   static normalize(cwd, name) {
-    if (isBuiltIn(name) || isNodeModule(cwd, name)) {
-      return name;
-    }
-
     return createPath(cwd, applyTransforms(name));
   }
 
@@ -95,5 +90,7 @@ class Path {
     return extname(this.path);
   }
 }
+
+Path.normalize = profileFn(Path.normalize, 'Path.normalize');
 
 module.exports = Path;

@@ -21,7 +21,7 @@ class File {
 
   get dependencies() {
     if (this._dependencies == null) {
-      this._dependencies = getDependencies(this.source);
+      this._dependencies = getDependencies(this.path, this.source);
     }
 
     return this._dependencies;

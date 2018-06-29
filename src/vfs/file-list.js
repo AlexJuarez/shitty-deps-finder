@@ -11,7 +11,6 @@ const log = require('./logger');
 const fs = Promise.promisifyAll(require('graceful-fs'));
 const compact = require('lodash.compact');
 const throttle = require('lodash.throttle');
-const pathLib = require('path');
 
 const isEmpty = (arr) => !Array.isArray(arr) || !arr.length;
 
@@ -23,7 +22,6 @@ class FileList extends EventEmitter {
     this._cwd = config.cwd || process.cwd();
     this._patterns = config.files;
     this._excludes = config.exclude;
-    this._preprocess = config.preprocess;
     this._refreshing = Promise.resolve();
     this._refreshInterval = config.refreshInterval;
     this._files = new FileStore(config);
@@ -69,7 +67,7 @@ class FileList extends EventEmitter {
       this._refreshing
     ]).spread((stat) => {
       file.mtime = stat.mtime;
-      return self._preprocess(file);
+      return file;
     })
     .then(() => {
       log.info(`Added file ${path}.`);
@@ -96,7 +94,6 @@ class FileList extends EventEmitter {
       }
 
       file.mtime = stat.mtime;
-      return self._preprocess(file);
     })
     .then(() => {
       log.info(`Changed file ${path}`);
@@ -160,7 +157,7 @@ class FileList extends EventEmitter {
 
     return Promise.all(this._patterns.map((pattern) => {
       const options = Object.assign({ cwd: this._cwd }, constants.GLOB_OPTS);
-      const stats = fg.sync(pathLib.normalize(pattern), options);
+      const stats = fg.sync(pattern, options);
       if (isEmpty(stats)) {
         log.warn(`Pattern ${pattern} did not match any files.`);
         return;
@@ -172,11 +169,7 @@ class FileList extends EventEmitter {
           return Promise.resolve();
         }
 
-        const file = new File(path, mtime);
-
-        return self._preprocess(file).then(() => {
-          return file;
-        });
+        return new File(path, mtime);
       }))
       .then((files) => {
         files = compact(files);

@@ -1,17 +1,31 @@
 const walk = require('babylon-walk');
-
-const parser = require('../parser/babylon');
+const t = require('babel-types');
+const parser = require('../parser');
 const { profileFn } = require('./profileFn');
 
-const isStringLiteral = (node) =>
-  node.type === 'Literal' || node.type === 'StringLiteral';
+const fns = ['require', 'lazyLoad', 'dynamicImport', 'importWithMock'];
 
-const getImports = (ast) => {
+const addRequires = (node, state) => {
+  if(!t.isIdentifier(node.callee)) return;
+  if(fns.indexOf(node.callee.name) === -1) return;
+  if(node.arguments.length > 1) return;
+  if(!t.isStringLiteral(node.arguments[0])) return;
+
+  state.dependencies.push(node.arguments[0].value);
+};
+
+const getDependencies = (filePath, source) => {
+  const ast = parser.parse(filePath, source);
+
   const state = {
     dependencies: [],
   };
 
   const visitors = {
+    CallExpression(node, state) {
+      addRequires(node, state);
+    },
+
     ImportDeclaration(node, state) {
       state.dependencies.push(node.source.value);
     }
@@ -22,43 +36,9 @@ const getImports = (ast) => {
   return state.dependencies;
 };
 
-const getRequire = (ast) => {
-  const state = {
-    dependencies: [],
-  };
-
-  const fns = ['require', 'lazyLoad', 'dynamicImport'];
-
-  const visitors = {
-    CallExpression(node, state) {
-      if (node.callee.type !== 'Identifier') {
-        return;
-      }
-
-      if (fns.indexOf(node.callee.name) > -1) {
-        const dependencies = node.arguments.filter(isStringLiteral).map(a => a.value);
-        state.dependencies.push(...dependencies);
-      }
-    }
-  };
-
-  walk.simple(ast, visitors, state);
-
-  return state.dependencies;
-};
-
-const getDependencies = (source) => {
-  const ast = parser.parse(source);
-
-  return [
-    ...getImports(ast),
-    ...getRequire(ast),
-  ];
-};
-
-module.exports = profileFn((source) => {
+module.exports = profileFn((filePath, source) => {
   try {
-    return getDependencies(source);
+    return getDependencies(filePath, source);
   } catch (err) {
     return [];
   }

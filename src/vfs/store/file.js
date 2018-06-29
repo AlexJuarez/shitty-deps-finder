@@ -22,7 +22,7 @@ class FileStore extends Store {
   }
 
   set(pattern, files) {
-    this._cache[pattern] = new Set(files);
+    this._cache[pattern] = files;
   }
 
   get(pattern) {
@@ -88,17 +88,14 @@ class FileStore extends Store {
   }
 
   files() {
-    const self = this;
-    const output = this.keys().map((pattern) => {
-      let entries = [];
-      self.get(pattern).forEach((file) => {
-        entries.push(file);
+    const output = {};
+    this.keys().forEach((pattern) => {
+      this.get(pattern).forEach((file) => {
+        output[file.path] = file;
       });
-
-      return entries;
     });
 
-    return uniq(flatten(output), 'path');
+    return Object.values(output);
   }
 
   toJSON() {

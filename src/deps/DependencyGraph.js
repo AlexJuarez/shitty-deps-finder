@@ -30,10 +30,10 @@ class DependencyGraph {
           }
 
           if (graph[p] == null) {
-            graph[p] = new Set();
+            graph[p] = [];
           }
 
-          graph[p].add(file.path);
+          graph[p].push(file.path);
         });
       });
     }
@@ -68,11 +68,7 @@ class DependencyGraph {
   }
 
   dump() {
-    const output = JSON.stringify(
-      this.files.toArray().map(f => f.valueOf()),
-      null,
-      ' '
-    );
+    const output = JSON.stringify(this.files.toArray());
     fs.writeFileSync(this.config.cacheFile, output);
   }
 

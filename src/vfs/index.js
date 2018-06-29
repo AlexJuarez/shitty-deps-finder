@@ -8,11 +8,6 @@ const fs = require('graceful-fs');
 const DEFAULT_OPTS = {
   watch: false,
   exclude: [],
-  preprocess: (file) => {
-    return new Promise((resolve) => {
-      resolve();
-    });
-  }
 };
 
 class Index {
@@ -21,14 +16,14 @@ class Index {
 
     const tracker = new Tracker(config);
 
-    if (opts.cacheFile && fs.existsSync(opts.cacheFile)) {
-      const json = JSON.parse(fs.readFileSync(opts.cacheFile, 'utf8'));
+    if (config.cacheFile && fs.existsSync(config.cacheFile)) {
+      const json = JSON.parse(fs.readFileSync(config.cacheFile, 'utf8'));
       tracker.hydrate(json);
     }
 
     return new Promise((resolve, reject) => {
       tracker.once('changed', (files) => {
-        if (opts.cacheFile) {
+        if (config.cacheFile) {
           fs.writeFileSync(opts.cacheFile, tracker.dumpStore());
         }
 

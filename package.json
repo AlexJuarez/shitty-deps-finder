@@ -7,6 +7,8 @@
     "dependency-finder": "./bin/cli.js"
   },
   "dependencies": {
+    "@babel/parser": "^7.0.0-beta.51",
+    "babel-types": "^6.26.0",
     "babylon": "^6.18.0",
     "babylon-walk": "^1.0.2",
     "bluebird": "^3.5.1",
@@ -27,7 +29,6 @@
     "node-glob": "^1.2.0",
     "relaxed-json": "^1.0.1"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
