@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { join, normalize, dirname, extname, basename } = require('path');
+const { resolve: fpResolve, join, dirname, extname, basename } = require('path');
 const { getPkgRoot } = require('../util/getPkgRoot');
 const memoize = require('../util/memoize');
 const resolver = require('../util/resolve/index');
@@ -9,7 +9,7 @@ const { isBuiltIn } = require('../util/resolve/types');
 
 const exists = (path) => fs.existsSync(path);
 
-const createPath = (...args) => normalize(join(...args));
+const createPath = (...args) => fpResolve(...args);
 
 const applyTransforms = (name) => {
   const fns = [

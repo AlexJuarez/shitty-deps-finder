@@ -30,10 +30,10 @@ class DependencyGraph {
           }
 
           if (graph[p] == null) {
-            graph[p] = [];
+            graph[p] = new Set();
           }
 
-          graph[p].push(file.path);
+          graph[p].add(file.path);
         });
       });
     }

@@ -15,7 +15,11 @@ const patterns = [
   'frontend/**/*.{test,js,jsx,ts,tsx}',
 ];
 
-const filePath = '/Users/ajuarez/projects/airbnb/frontend/luxury-guest/src/components/old-dls/Pdp/sections/PhotoMosaicSection.jsx';
+const createTestPath = (fp) =>
+  path.join(getPkgRoot(), fp);
+
+const testPath1 = createTestPath('/frontend/luxury-guest/src/components/old-dls/Pdp/sections/PhotoMosaicSection.jsx');
+const testPath2 = createTestPath('/app/assets/javascripts/shared/experiences/utils/bootstrapDataUtils.js');
 
 VFS.async(patterns, { cwd: getPkgRoot() }).then((files) => {
   files.forEach(file => {
@@ -24,7 +28,8 @@ VFS.async(patterns, { cwd: getPkgRoot() }).then((files) => {
 
   const graph = deps.toGraph();
 
-  console.log(graph[filePath]);
+  console.log(graph[testPath1]);
+  console.log(graph[testPath2]);
   deps.dump();
   console.log(`found ${files.length} files`);
   getProfiles();
