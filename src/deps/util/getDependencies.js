@@ -6,8 +6,21 @@ const path = require('path');
 const { getPkgRoot } = require('../util/getPkgRoot');
 const Path = require('../store/Path');
 
+// find jest.mock(...)
+const addJestMock = (node, state) => {
+  if(!t.isMemberExpression(node.callee)) return;
+  if(!t.isIdentifier(node.callee.object)) return;
+  if(!t.isIdentifier(node.callee.property)) return;
+  if(node.callee.object.name !== 'jest') return;
+  if(node.callee.property.name !== 'mock') return;
+  if(!t.isStringLiteral(node.arguments[0])) return;
+
+  state.dependencies.push(node.arguments[0].value);
+};
+
 const fns = ['require', 'lazyLoad', 'dynamicImport', 'importWithMock'];
 
+// find require(...), etc
 const addRequires = (node, state) => {
   if(!t.isIdentifier(node.callee)) return;
   if(fns.indexOf(node.callee.name) === -1) return;
@@ -25,6 +38,7 @@ const addMocks = (node, parentPath, state) => {
   node.properties.forEach(prop => {
     if (!t.isStringLiteral(prop.key)) return;
 
+    // resolve the path now with new context
     const path = Path.normalize(parentPath, prop.key.value);
     state.dependencies.push(path);
   });
@@ -56,6 +70,7 @@ const getDependencies = (filePath, source) => {
 
   const visitors = {
     CallExpression(node, state) {
+      addJestMock(node, state);
       addRequires(node, state);
       addImportPathFromDirMock(node, state);
     },
