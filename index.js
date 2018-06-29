@@ -2,7 +2,7 @@ const DependencyGraph = require('./src/deps/DependencyGraph');
 const VFS = require('./src/vfs');
 const { getPkgRoot, setPkgRoot } = require('./src/deps/util/getPkgRoot');
 const path = require('path');
-const { getProfiles, profileFn } = require('./src/deps/util/profileFn');
+const { getProfiles } = require('./src/deps/util/profileFn');
 
 setPkgRoot(path.resolve('../airbnb/'));
 
@@ -21,15 +21,20 @@ const createTestPath = (fp) =>
 const testPath1 = createTestPath('/frontend/luxury-guest/src/components/old-dls/Pdp/sections/PhotoMosaicSection.jsx');
 const testPath2 = createTestPath('/app/assets/javascripts/shared/experiences/utils/bootstrapDataUtils.js');
 
+const testPath = (path, graph) => {
+  console.log(`file: ${path}`);
+  console.log(`referred by:`);
+  console.log([...graph[path]]);
+};
+
 VFS.async(patterns, { cwd: getPkgRoot() }).then((files) => {
   files.forEach(file => {
     deps.addPath(file.path)
   });
 
   const graph = deps.toGraph();
-
-  console.log(graph[testPath1]);
-  console.log(graph[testPath2]);
+  testPath(testPath1, graph);
+  testPath(testPath2, graph);
   deps.dump();
   console.log(`found ${files.length} files`);
   getProfiles();
