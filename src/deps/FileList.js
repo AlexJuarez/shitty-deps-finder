@@ -15,7 +15,7 @@ class FileList {
   }
 
   getFile(cwd, name) {
-    const file = new File(cwd, name);
+    const file = new File({ cwd, name });
 
     return this.store.get(file.path) || file;
   }

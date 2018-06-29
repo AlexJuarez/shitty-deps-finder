@@ -1,10 +1,9 @@
 const FileList = require('./FileList');
 const File = require('./store/File');
-const Path = require('./store/Path');
 const Config = require('./Config');
 const { setPkgRoot } = require('./util/getPkgRoot');
-const { dirname, basename } = require('path');
 const fs = require('graceful-fs');
+const resolve = require('./util/resolve/virtual');
 
 class DependencyGraph {
   constructor(opts = {}) {
@@ -18,23 +17,26 @@ class DependencyGraph {
 
   toGraph() {
     const files = this.files.toArray();
+    const self = this;
     const graph = {};
+
+    const exists = (path) => self.files.has(path);
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
+
       file.dependencies.forEach(name => {
-        const fp = Path.normalize(file.cwd, name);
-        [`${fp}.js`, `${fp}.jsx`].forEach((p) => {
-          if (!this.files.has(p)) {
-            return;
-          }
+        const fp = resolve(file.cwd, name, exists, ['.js', '.jsx', '.ts', '.tsx']);
 
-          if (graph[p] == null) {
-            graph[p] = new Set();
-          }
+        if (!this.files.has(fp)) {
+          return;
+        }
 
-          graph[p].add(file.path);
-        });
+        if (graph[fp] == null) {
+          graph[fp] = new Set();
+        }
+
+        graph[fp].add(file.path);
       });
     }
 
@@ -42,17 +44,7 @@ class DependencyGraph {
   }
 
   addPath(path) {
-    const file = new File(dirname(path), basename(path), path);
-    this.files.addFile(file);
-  }
-
-  add(cwd, name) {
-    const file = new File(cwd, name);
-
-    if (this.files.hasFile(file)) {
-      return;
-    }
-
+    const file = new File({ path });
     this.files.addFile(file);
   }
 
@@ -63,12 +55,12 @@ class DependencyGraph {
 
     const json = fs.readFileSync(this.config.cacheFile, 'utf8');
     JSON.parse(json).forEach(f => {
-      this.files.addFile(new File(f.cwd, f.name, f.path, f.dependencies, f.type));
+      this.files.addFile(new File({ path: f.path }, f.dependencies));
     });
   }
 
   dump() {
-    const output = JSON.stringify(this.files.toArray());
+    const output = JSON.stringify(this.files.toArray().map(f => f.valueOf()));
     fs.writeFileSync(this.config.cacheFile, output);
   }
 
