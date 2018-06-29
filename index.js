@@ -23,11 +23,11 @@ const testPath2 = createTestPath('/app/assets/javascripts/shared/experiences/uti
 
 const testPath = (path, graph) => {
   console.log(`file: ${path}`);
-  console.log(`referred by:`);
+  console.log(`is referred by:`);
   console.log([...graph[path]]);
 };
 
-VFS.async(patterns, { cwd: getPkgRoot() }).then((files) => {
+VFS.async(patterns, { cwd: getPkgRoot(), exclude: ['**/vendor/**'] }).then((files) => {
   files.forEach(file => {
     deps.addPath(file.path)
   });
