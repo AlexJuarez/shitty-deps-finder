@@ -12,9 +12,7 @@ class FileStore {
   }
 
   add(key, file) {
-    if (!this.has(key)) {
-      this.files[key] = file;
-    }
+    this.files[key] = file;
   }
 
   toArray() {

@@ -6,6 +6,7 @@ const log = require('./logger');
 const fs = require('graceful-fs');
 
 const DEFAULT_OPTS = {
+  cacheFile: '/tmp/.vfs.cache.json',
   watch: false,
   exclude: [],
 };
@@ -24,7 +25,7 @@ class Index {
     return new Promise((resolve, reject) => {
       tracker.once('changed', (files) => {
         if (config.cacheFile) {
-          fs.writeFileSync(opts.cacheFile, tracker.dumpStore());
+          fs.writeFileSync(config.cacheFile, tracker.dumpStore());
         }
 
         resolve(files);

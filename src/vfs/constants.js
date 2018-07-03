@@ -3,5 +3,6 @@ exports.GLOB_OPTS = {
   onlyFiles: true,
   dot: true,
   stats: true,
-  transform: (entry) => typeof entry === 'string' ? { path: entry } : { path: entry.path },
+  transform: (entry) =>
+    typeof entry === 'string' ? { path: entry } : entry,
 };
