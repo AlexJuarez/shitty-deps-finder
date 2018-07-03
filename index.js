@@ -35,6 +35,7 @@ VFS.async(patterns, { cwd: getPkgRoot(), exclude: ['**/vendor/**'] }).then((file
   const graph = deps.toGraph();
   testPath(testPath1, graph);
   testPath(testPath2, graph);
+  testPath('airbnb-dls-web/build/exp/Text', graph);
   deps.dump();
   console.log(`found ${files.length} files`);
   getProfiles();
