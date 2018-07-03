@@ -13,7 +13,7 @@ const checkExt = (ext, exists) => (cwd, name) => {
   }
 };
 
-const resolve = (cwd, name, exists = fsExists, extensions = ['.js', '.jsx']) => {
+const resolve = (cwd, name, exists = fsExists, extensions = ['.js', '.jsx', '.ts', '.tsx']) => {
   const expandedName = applyTransforms(name);
 
   // when path == null when it does not exist
@@ -25,6 +25,8 @@ const resolve = (cwd, name, exists = fsExists, extensions = ['.js', '.jsx']) => 
       return fp;
     }
   }
+
+  return expandedName;
 };
 
 module.exports = resolve;

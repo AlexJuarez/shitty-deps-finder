@@ -3,7 +3,7 @@ const getSource = require('../util/getSource');
 const getDependencies = require('../util/getDependencies');
 
 class File {
-  constructor({ cwd, name, path }, dependencies) {
+  constructor({ cwd, name, path, dependencies }) {
     this._path = new Path({cwd, name, path});
     this._dependencies = dependencies;
     this._source = null;

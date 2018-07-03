@@ -1,7 +1,6 @@
 const FileList = require('./FileList');
 const File = require('./store/File');
 const Config = require('./Config');
-const { setPkgRoot } = require('./util/getPkgRoot');
 const fs = require('graceful-fs');
 const resolve = require('./util/resolve/virtual');
 
@@ -9,28 +8,20 @@ class DependencyGraph {
   constructor(opts = {}) {
     this.config = new Config(opts);
     this.files = new FileList();
-
-    if (this.config.root) {
-      setPkgRoot(this.config.root);
-    }
   }
 
   toGraph() {
     const files = this.files.toArray();
-    const self = this;
     const graph = {};
+    const self = this;
 
-    const exists = (path) => self.files.has(path);
+    const exists = self.files.has;
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
 
       file.dependencies.forEach(name => {
         const fp = resolve(file.cwd, name, exists, ['.js', '.jsx', '.ts', '.tsx']);
-
-        if (!this.files.has(fp)) {
-          return;
-        }
 
         if (graph[fp] == null) {
           graph[fp] = new Set();
@@ -45,18 +36,18 @@ class DependencyGraph {
 
   addPath(path) {
     const file = new File({ path });
-    this.files.addFile(file);
+    this.files.add(file);
   }
 
   hydrate() {
-    if (!fs.existsSync(this.config.cacheFile)) {
-      return;
+    try {
+      const json = fs.readFileSync(this.config.cacheFile, 'utf8');
+      JSON.parse(json).forEach(f => {
+        this.files.add(new File(f));
+      });
+    } catch (err) {
+      console.log(`Could not load the cache from disk: ${this.config.cacheFile}`);
     }
-
-    const json = fs.readFileSync(this.config.cacheFile, 'utf8');
-    JSON.parse(json).forEach(f => {
-      this.files.addFile(new File({ path: f.path }, f.dependencies));
-    });
   }
 
   dump() {
